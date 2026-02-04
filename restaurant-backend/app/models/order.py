@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
-from app.db.database import Base
+from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime
 from sqlalchemy.sql import func
-from sqlalchemy import DateTime
 
+from app.db.database import Base
 
 
 class Order(Base):
@@ -10,29 +9,27 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    # which table placed the order
+    # Which table placed the order
     table_number = Column(Integer, nullable=False)
 
-    # NEW — link customer phone
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    # Link customer
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False, index=True)
 
-    # order flow
-    status = Column(String(50), default="pending")
+    # Order lifecycle
+    status = Column(String(50), default="pending", index=True)
 
-    # total bill
+    # Total bill
     total_price = Column(Float, default=0)
-    
-    #food time to prepare
+
+    # Order creation time
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
+    # Billing
     payment_method = Column(String(20), nullable=True)
-    
     paid_at = Column(DateTime(timezone=True), nullable=True)
-    
-    order_number = Column(String(20), unique=True, nullable=True)
 
-
-
+    # Human-friendly order number
+    order_number = Column(String(20), unique=True, index=True, nullable=False)
 
 
 class OrderItem(Base):
@@ -40,7 +37,7 @@ class OrderItem(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False, index=True)
 
     menu_item_id = Column(Integer, nullable=False)
 
