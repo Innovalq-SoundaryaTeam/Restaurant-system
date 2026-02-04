@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, ForeignKey,Enum
+from app.models.enums import OrderStatus
 from app.db.database import Base
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime
@@ -17,7 +18,11 @@ class Order(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
 
     # order flow
-    status = Column(String(50), default="pending")
+    status = Column(
+    Enum(OrderStatus),
+    default=OrderStatus.PENDING,
+    nullable=False
+)
 
     # total bill
     total_price = Column(Float, default=0)

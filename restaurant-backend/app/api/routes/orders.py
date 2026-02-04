@@ -7,24 +7,38 @@ from datetime import datetime, date
 from app.db.database import get_db
 from app.services.order_service import create_order
 
-# ✅ Import ALL models properly
 from app.models.order import Order, OrderItem
 from app.models.customer import Customer
 from app.models.menu import MenuItem
+from app.schemas.order_schema import PlaceOrderSchema
+
 
 
 router = APIRouter()
 
 
-# ✅ PLACE ORDER
+# ✅ LOCKED STATUS LIST
+VALID_STATUSES = [
+    "PENDING",
+    "PREPARING",
+    "ALMOST_DONE",
+    "READY",
+    "CANCELLED",
+    "PAID"
+]
+
+
+# ==============================
+# PLACE ORDER
+# ==============================
 @router.post("/orders")
-def place_order(payload: dict, db: Session = Depends(get_db)):
+def place_order(payload: PlaceOrderSchema, db: Session = Depends(get_db)):
 
     order = create_order(
         db=db,
-        table_number=payload["table_number"],
-        phone_number=payload["phone_number"],
-        items=payload["items"]
+        table_number=payload.table_number,
+        phone_number=payload.phone_number,
+        items=[item.dict() for item in payload.items]
     )
 
     return {
@@ -35,25 +49,32 @@ def place_order(payload: dict, db: Session = Depends(get_db)):
     }
 
 
-# ✅ KITCHEN VIEW
+# ==============================
+# KITCHEN VIEW
+# ==============================
 @router.get("/kitchen/orders")
 def get_kitchen_orders(db: Session = Depends(get_db)):
 
     orders = db.query(Order).filter(
-        Order.status != "paid"
+        Order.status.in_(["PENDING", "PREPARING", "ALMOST_DONE"])
     ).order_by(Order.created_at).all()
 
     return orders
 
 
-# ✅ UPDATE ORDER STATUS
+# ==============================
+# UPDATE ORDER STATUS
+# ==============================
 @router.put("/kitchen/orders/{order_id}")
 def update_order_status(order_id: int, status: str, db: Session = Depends(get_db)):
 
-    valid_status = ["pending", "preparing", "ready", "paid"]
+    status = status.upper()
 
-    if status not in valid_status:
-        raise HTTPException(status_code=400, detail="Invalid status")
+    if status not in VALID_STATUSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status. Must be one of {VALID_STATUSES}"
+        )
 
     order = db.query(Order).filter(
         Order.id == order_id
@@ -70,7 +91,9 @@ def update_order_status(order_id: int, status: str, db: Session = Depends(get_db
     }
 
 
-# ✅ BILLING
+# ==============================
+# BILLING
+# ==============================
 @router.put("/billing/pay/{order_id}")
 def mark_order_paid(order_id: int, payment_method: str, db: Session = Depends(get_db)):
 
@@ -81,10 +104,10 @@ def mark_order_paid(order_id: int, payment_method: str, db: Session = Depends(ge
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    if order.status == "paid":
+    if order.status == "PAID":
         raise HTTPException(status_code=400, detail="Order already paid")
 
-    order.status = "paid"
+    order.status = "PAID"
     order.payment_method = payment_method
     order.paid_at = datetime.utcnow()
 
@@ -95,7 +118,9 @@ def mark_order_paid(order_id: int, payment_method: str, db: Session = Depends(ge
     }
 
 
-# ✅ TODAY SALES (OWNER FAVORITE)
+# ==============================
+# TODAY SALES
+# ==============================
 @router.get("/reports/today-sales")
 def today_sales(db: Session = Depends(get_db)):
 
@@ -118,7 +143,9 @@ def today_sales(db: Session = Depends(get_db)):
     }
 
 
-# ✅ ORDER DETAILS (CLIENT WOW FEATURE)
+# ==============================
+# ORDER DETAILS
+# ==============================
 @router.get("/orders/{order_id}")
 def get_order_details(order_id: int, db: Session = Depends(get_db)):
 
@@ -146,7 +173,7 @@ def get_order_details(order_id: int, db: Session = Depends(get_db)):
         ).first()
 
         item_list.append({
-            "name": menu_item.name,
+            "name": menu_item.name if menu_item else "Deleted Item",
             "quantity": item.quantity,
             "price": item.price
         })
