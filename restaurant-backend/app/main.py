@@ -13,11 +13,16 @@ from app.models.staff import Staff
 from app.core.security import hash_pin
 from app.db.database import SessionLocal
 from app.api.routes.table_routes import router as table_router
+from app.api.routes import admin_customers
+
+
 
 app = FastAPI(title="Restaurant Management API")
 
 app.include_router(table_router)
 app.include_router(admin_router)
+app.include_router(admin_customers.router)
+
 Base.metadata.create_all(bind=engine)
 
 def create_initial_admin():

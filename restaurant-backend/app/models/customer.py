@@ -1,5 +1,8 @@
 from sqlalchemy import Column, Integer, String
 from app.db.database import Base
+from sqlalchemy import DateTime
+from sqlalchemy.sql import func
+
 
 
 class Customer(Base):
@@ -9,8 +12,9 @@ class Customer(Base):
 
     name = Column(String(100), nullable=False)
 
-    phone_number = Column(String(20), unique=True, nullable=False)
+    phone_number = Column(String(20), nullable=False, index=True)
 
-    otp = Column(String(6), nullable=True)
+    email = Column(String(150), nullable=True, index=True)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    is_verified = Column(Integer, default=0)

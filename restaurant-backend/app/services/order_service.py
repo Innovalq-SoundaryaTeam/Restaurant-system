@@ -5,54 +5,72 @@ from app.models.order import Order, OrderItem
 from app.models.menu import MenuItem
 from app.models.customer import Customer
 
-import random
+
+def generate_order_number(db: Session):
+    """
+    Generate sequential order numbers like:
+    ORD-1000, ORD-1001
+    """
+
+    last_order = db.query(Order).order_by(Order.id.desc()).first()
+
+    if last_order:
+        next_number = last_order.id + 1000
+    else:
+        next_number = 1000
+
+    return f"ORD-{next_number}"
 
 
+def create_order(
+    db: Session,
+    table_number: int,
+    customer_data: dict,
+    items: list
+):
 
-def create_order(db: Session, table_number: int, phone_number: str, items: list):
-    
-    order_number = f"ORD-{random.randint(1000,9999)}"
+    # ✅ Validate items
+    if not items:
+        raise HTTPException(status_code=400, detail="No items provided")
 
-    order = Order(
-    order_number=order_number,
-    table_number=table_number,
-    customer_id=customer.id,
-    status="pending"
-    )
+    # ✅ Validate phone
+    phone = customer_data.get("phone_number")
 
-    # ✅ sanitize phone number (VERY IMPORTANT)
-    clean_phone = str(phone_number).strip()
+    if not phone:
+        raise HTTPException(status_code=400, detail="Customer phone number required")
 
-    # ✅ fetch verified customer
+    phone = phone.strip()
+
+    # ✅ Prevent duplicate customers
     customer = db.query(Customer).filter(
-        Customer.phone_number == clean_phone
+        Customer.phone_number == phone
     ).first()
 
     if not customer:
-        raise HTTPException(
-            status_code=404,
-            detail="Customer not found. Please verify OTP first."
+        customer = Customer(
+            name=customer_data.get("name", "Guest"),
+            phone_number=phone,
+            email=customer_data.get("email")
         )
+        db.add(customer)
+        db.flush()  # gets customer.id immediately
 
-    if customer.is_verified != 1:
-        raise HTTPException(
-            status_code=400,
-            detail="Customer not verified. Please verify OTP first."
-        )
+    # ✅ Generate professional order number
+    order_number = generate_order_number(db)
 
-    # ✅ create order
     order = Order(
+        order_number=order_number,
         table_number=table_number,
         customer_id=customer.id,
         status="pending"
     )
 
     db.add(order)
-    db.flush()  # get order ID
+    db.flush()  # gets order.id immediately
 
-    total = 0
+    total_price = 0
 
-    # ✅ process items
+    # ✅ Process items safely
     for item in items:
 
         menu_item = db.query(MenuItem).filter(
@@ -66,22 +84,33 @@ def create_order(db: Session, table_number: int, phone_number: str, items: list)
                 detail=f"Menu item {item['menu_item_id']} not available"
             )
 
-        price = menu_item.price * item["quantity"]
+        quantity = item.get("quantity", 1)
+
+        if quantity <= 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Quantity must be greater than 0"
+            )
+
+        item_total = menu_item.price * quantity
 
         order_item = OrderItem(
             order_id=order.id,
             menu_item_id=menu_item.id,
-            quantity=item["quantity"],
-            price=price
+            quantity=quantity,
+            price=item_total
         )
 
         db.add(order_item)
 
-        total += price
+        total_price += item_total
 
-    order.total_price = total
+    # ✅ Update order total
+    order.total_price = total_price
 
+    # ✅ ONE commit only (professional pattern)
     db.commit()
+
     db.refresh(order)
 
     return order

@@ -32,21 +32,21 @@ VALID_STATUSES = [
 # PLACE ORDER
 # ==============================
 @router.post("/orders")
-def place_order(payload: PlaceOrderSchema, db: Session = Depends(get_db)):
+def place_order(payload: dict, db: Session = Depends(get_db)):
 
     order = create_order(
         db=db,
-        table_number=payload.table_number,
-        phone_number=payload.phone_number,
-        items=[item.dict() for item in payload.items]
+        table_number=payload["table_number"],
+        customer_data=payload["customer"],
+        items=payload["items"]
     )
 
     return {
-        "message": "Order placed successfully!",
-        "order_id": order.id,
+        "message": f"✅ Order {order.order_number} placed successfully!",
         "order_number": order.order_number,
-        "total": order.total_price
+        "total": f"₹{order.total_price}"
     }
+
 
 
 # ==============================
@@ -56,10 +56,19 @@ def place_order(payload: PlaceOrderSchema, db: Session = Depends(get_db)):
 def get_kitchen_orders(db: Session = Depends(get_db)):
 
     orders = db.query(Order).filter(
-        Order.status.in_(["PENDING", "PREPARING", "ALMOST_DONE"])
-    ).order_by(Order.created_at).all()
+        Order.status != "paid"
+    ).order_by(Order.created_at.asc()).all()
 
-    return orders
+    return [
+        {
+            "order_number": o.order_number,
+            "table": o.table_number,
+            "status": o.status,
+            "total": f"₹{o.total_price}"
+        }
+        for o in orders
+    ]
+
 
 
 # ==============================
@@ -138,8 +147,9 @@ def today_sales(db: Session = Depends(get_db)):
 
     return {
         "date": str(today),
-        "today_revenue": float(total_sales or 0),
-        "total_orders": total_orders
+        "today_revenue": f"₹{float(total_sales or 0)}",
+        "total_orders": total_orders,
+        "avg_order_value": f"₹{round((total_sales or 0) / total_orders, 2) if total_orders else 0}"
     }
 
 
