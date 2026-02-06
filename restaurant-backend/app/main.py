@@ -14,14 +14,27 @@ from app.core.security import hash_pin
 from app.db.database import SessionLocal
 from app.api.routes.table_routes import router as table_router
 from app.api.routes import admin_customers
+from app.api.routes import billing_pdf
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
 app = FastAPI(title="Restaurant Management API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all (good for development)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 app.include_router(table_router)
 app.include_router(admin_router)
 app.include_router(admin_customers.router)
+app.include_router(billing_pdf.router)
+
 
 Base.metadata.create_all(bind=engine)
 
