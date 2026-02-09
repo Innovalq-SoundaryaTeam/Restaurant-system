@@ -9,6 +9,10 @@ const CheckoutPage = () => {
   const [error, setError] = useState(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
+  
+  // New state for payment method selection
+  const [paymentMethod, setPaymentMethod] = useState('upi'); 
+  
   const navigate = useNavigate();
 
   const tableNumber = localStorage.getItem('tableNumber') || 'Not specified';
@@ -60,7 +64,7 @@ const CheckoutPage = () => {
           quantity: item.quantity,
           special_instructions: ""
         })),
-        payment_method: "upi"
+        payment_method: paymentMethod // Dynamic selection sent to backend
       };
 
       const response = await fetch("http://127.0.0.1:8000/api/orders", {
@@ -80,7 +84,6 @@ const CheckoutPage = () => {
       setOrderDetails(result);
       setOrderPlaced(true);
       
-      // Save order details to localStorage for OrderPlacedPage
       const orderDataForStorage = {
         orderId: result.id,
         orderNumber: result.order_number,
@@ -88,11 +91,9 @@ const CheckoutPage = () => {
         status: result.status
       };
       localStorage.setItem('lastOrder', JSON.stringify(orderDataForStorage));
-      
-      // Clear cart from localStorage
       localStorage.removeItem('cart');
       
-      // Redirect to kitchen panel after 2 seconds
+      // Redirect to kitchen panel
       setTimeout(() => {
         navigate('/kitchen');
       }, 2000);
@@ -115,6 +116,7 @@ const CheckoutPage = () => {
     }
   };
 
+  // Success UI
   if (orderPlaced && orderDetails) {
     return (
       <div className="checkout-container">
@@ -128,38 +130,30 @@ const CheckoutPage = () => {
               <span className="order-number">{orderDetails.order_number}</span>
             </div>
             <div className="summary-item">
-              <span>Table:</span>
-              <span>{tableNumber}</span>
+              <span>Payment Via:</span>
+              <span className="method-badge">{paymentMethod.toUpperCase()}</span>
             </div>
             <div className="summary-item">
               <span>Total Amount:</span>
               <span className="total-amount">${orderDetails.total_price?.toFixed(2) || getTotalPrice().toFixed(2)}</span>
             </div>
-            <div className="summary-item">
-              <span>Email:</span>
-              <span>{customerData.email}</span>
-            </div>
           </div>
 
           <div className="success-message">
-            <p>📧 Your order confirmation has been sent</p>
-            <p>🍽️ Your order is being prepared in the kitchen</p>
-            <p>⏭️ Redirecting to kitchen panel in 2 seconds...</p>
+            <p>📧 Confirmation sent to {customerData.email}</p>
+            <p>🍽️ Preparing your food in the kitchen...</p>
           </div>
 
           <div className="action-buttons">
-            <button onClick={handleTrackOrder} className="track-btn">
-              📍 Track Order
-            </button>
-            <button onClick={handleBackToMenu} className="new-order-btn">
-              🍴 New Order
-            </button>
+            <button onClick={handleTrackOrder} className="track-btn">📍 Track Order</button>
+            <button onClick={handleBackToMenu} className="new-order-btn">🍴 New Order</button>
           </div>
         </div>
       </div>
     );
   }
 
+  // Checkout Form UI
   return (
     <div className="checkout-container">
       <div className="checkout-card">
@@ -171,14 +165,10 @@ const CheckoutPage = () => {
           </div>
         </header>
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         <section className="order-summary">
-          <h2>Order Summary</h2>
+          <h2>Items Summary</h2>
           <div className="items-list">
             {cart.map(item => (
               <div key={item.id} className="checkout-item">
@@ -194,10 +184,6 @@ const CheckoutPage = () => {
           </div>
           
           <div className="price-summary">
-            <div className="summary-row">
-              <span>Items ({getTotalItems()}):</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
-            </div>
             <div className="summary-row total">
               <span>Total Amount:</span>
               <span>${getTotalPrice().toFixed(2)}</span>
@@ -205,46 +191,33 @@ const CheckoutPage = () => {
           </div>
         </section>
 
-        <section className="customer-details">
-          <h2>Customer Details</h2>
-          <div className="details-grid">
-            <div className="detail-item">
-              <span>Name:</span>
-              <span>{customerData.name || 'Not provided'}</span>
-            </div>
-            <div className="detail-item">
-              <span>Phone:</span>
-              <span>{customerData.phone_number || 'Not provided'}</span>
-            </div>
-            <div className="detail-item">
-              <span>Email:</span>
-              <span>{customerData.email || 'Not provided'}</span>
-            </div>
-            <div className="detail-item">
-              <span>Table:</span>
-              <span>{tableNumber}</span>
-            </div>
-          </div>
-        </section>
-
+        {/* --- Updated Payment Section --- */}
         <section className="payment-info">
-          <h2>Payment Information</h2>
-          <div className="payment-method">
-            <span>Payment Method:</span>
-            <span>UPI (Default)</span>
+          <h2>Payment Method</h2>
+          <div className="payment-selector">
+            {['upi', 'cash', 'card'].map((method) => (
+              <label key={method} className={`method-card ${paymentMethod === method ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  value={method}
+                  checked={paymentMethod === method}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span className="radio-label">{method.toUpperCase()}</span>
+              </label>
+            ))}
           </div>
-          <p className="payment-note">
-            Payment will be confirmed by restaurant staff. Your order confirmation will be available.
-          </p>
+          <div className="payment-help-text">
+            {paymentMethod === 'upi' && "💡 Scan the QR code at your table or counter."}
+            {paymentMethod === 'cash' && "💡 Please pay at the counter before/after your meal."}
+            {paymentMethod === 'card' && "💡 A staff member will bring the card terminal."}
+          </div>
         </section>
 
         <div className="checkout-actions">
-          <button 
-            onClick={handleBackToMenu}
-            className="back-btn"
-            disabled={loading}
-          >
-            ← Back to Menu
+          <button onClick={handleBackToMenu} className="back-btn" disabled={loading}>
+            ← Edit Order
           </button>
           
           <button 
@@ -252,7 +225,7 @@ const CheckoutPage = () => {
             className="place-order-btn"
             disabled={loading || cart.length === 0}
           >
-            {loading ? 'Placing Order...' : `Place Order - $${getTotalPrice().toFixed(2)}`}
+            {loading ? 'Processing...' : `Confirm & Order - $${getTotalPrice().toFixed(2)}`}
           </button>
         </div>
       </div>

@@ -38,7 +38,7 @@ export default function AdminLogin() {
         setMessage("Login successful! Redirecting...");
 
         setTimeout(() => {
-          navigate("/admin/menu"); 
+          navigate("/Dashboard"); 
         }, 1000);
 
       } else {
