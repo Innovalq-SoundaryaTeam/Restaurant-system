@@ -1,0 +1,36 @@
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+
+from app.models.order import Order
+from app.models.enums import OrderStatus
+
+
+def update_order_status(db: Session, order_id: int, status: str):
+    if not status:
+        raise HTTPException(status_code=400, detail="Status is required")
+
+    status = status.upper().strip()
+
+    # ✅ Validate enum safely
+    try:
+        new_status = OrderStatus[status]
+    except KeyError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status: {status}"
+        )
+
+    order = db.query(Order).filter(Order.id == order_id).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order.status = new_status
+    db.commit()
+    db.refresh(order)
+
+    return {
+        "order_id": order.id,
+        "order_number": order.order_number,
+        "status": order.status.value
+    }

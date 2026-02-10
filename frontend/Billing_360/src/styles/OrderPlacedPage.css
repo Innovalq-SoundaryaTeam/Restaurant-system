@@ -1,0 +1,216 @@
+.order-placed-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.success-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.success-card h1 {
+  color: #333;
+  margin: 0 0 20px 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.order-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item span:first-child {
+  color: #666;
+  font-weight: 500;
+}
+
+.summary-item .order-number {
+  font-weight: 700;
+  color: #667eea;
+}
+
+.summary-item .total-amount {
+  font-weight: 700;
+  color: #28a745;
+  font-size: 1.2rem;
+}
+
+.success-message {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.success-message p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 20px 20px;
+}
+
+.download-btn,
+.track-btn,
+.new-order-btn,
+.finish-meal-btn {
+  padding: 15px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  width: 100%;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.track-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.new-order-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.finish-meal-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+  color: white;
+}
+
+.download-btn:hover,
+.track-btn:hover,
+.new-order-btn:hover,
+.finish-meal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-placed-container {
+    padding: 10px;
+  }
+  
+  .success-card {
+    margin: 10px;
+    border-radius: 15px;
+  }
+  
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+    margin: 0 auto 20px;
+  }
+  
+  .success-card h1 {
+    font-size: 1.8rem;
+  }
+  
+  .order-summary {
+    padding: 15px;
+    margin: 15px 0;
+  }
+  
+  .summary-item {
+    padding: 10px 0;
+  }
+  
+  .action-buttons {
+    padding: 0 15px 15px;
+  }
+  
+  .download-btn,
+  .track-btn,
+  .new-order-btn,
+  .finish-meal-btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .success-card {
+    margin: 5px;
+    border-radius: 10px;
+  }
+  
+  .success-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    margin: 0 auto 15px;
+  }
+  
+  .success-card h1 {
+    font-size: 1.5rem;
+  }
+  
+  .order-summary {
+    padding: 12px;
+    margin: 12px 0;
+  }
+  
+  .summary-item {
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+}

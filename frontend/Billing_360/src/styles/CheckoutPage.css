@@ -1,0 +1,402 @@
+.payment-selector {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.method-card {
+  flex: 1;
+  border: 2px solid #eee;
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 600;
+}
+
+.method-card.active {
+  border-color: #4CAF50; /* Success green or your brand color */
+  background-color: #f0fff0;
+}
+
+.payment-help-text {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.method-badge {
+  background: #e1e1e1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.checkout-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkout-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.checkout-header {
+  background: #f8f9fa;
+  padding: 30px;
+  border-bottom: 1px solid #e9ecef;
+  border-radius: 20px 20px 0 0;
+}
+
+.checkout-header h1 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.header-info {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  font-size: 1rem;
+}
+
+.error-message {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 15px;
+  margin: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.order-summary,
+.customer-details,
+.payment-info {
+  padding: 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.order-summary h2,
+.customer-details h2,
+.payment-info h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.items-list {
+  margin-bottom: 20px;
+}
+
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.checkout-item:last-child {
+  border-bottom: none;
+}
+
+.item-info h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.item-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.item-total {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.price-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  color: #666;
+}
+
+.summary-row.total {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #333;
+  border-top: 2px solid #dee2e6;
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.detail-item span:first-child {
+  color: #666;
+  font-weight: 500;
+}
+
+.detail-item span:last-child {
+  color: #333;
+  font-weight: 600;
+}
+
+.payment-method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.payment-note {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.checkout-actions {
+  display: flex;
+  gap: 15px;
+  padding: 30px;
+}
+
+.back-btn,
+.place-order-btn {
+  flex: 1;
+  padding: 16px 24px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.back-btn {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
+}
+
+.back-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.place-order-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.place-order-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.back-btn:disabled,
+.place-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Success Page Styles */
+.success-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.success-card h1 {
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.order-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.summary-item .order-number {
+  font-weight: 700;
+  color: #667eea;
+}
+
+.summary-item .total-amount {
+  font-weight: 700;
+  color: #28a745;
+  font-size: 1.2rem;
+}
+
+.success-message {
+  margin-bottom: 30px;
+}
+
+.success-message p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.download-btn,
+.track-btn,
+.new-order-btn {
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.track-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.new-order-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.download-btn:hover,
+.track-btn:hover,
+.new-order-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 10px;
+  }
+  
+  .checkout-card {
+    margin: 10px;
+    padding: 0;
+  }
+  
+  .checkout-header {
+    padding: 20px;
+  }
+  
+  .checkout-header h1 {
+    font-size: 2rem;
+  }
+  
+  .header-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .order-summary,
+  .customer-details,
+  .payment-info {
+    padding: 20px;
+  }
+  
+  .checkout-actions {
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .success-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .success-card h1 {
+    font-size: 1.8rem;
+  }
+}
