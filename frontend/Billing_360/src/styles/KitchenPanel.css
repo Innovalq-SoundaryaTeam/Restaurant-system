@@ -1,335 +1,215 @@
-.kitchen-container {
-  min-height: 100vh;
-  background: #f8f9fa;
-  padding: 20px;
+/* src/styles/KitchenPanel.css */
+
+/* --- Theme Variables --- */
+:root {
+  --bg-color: #000000;
+  --card-bg: #111111;
+  --text-white: #ffffff;
+  --text-muted: #888888;
+  --border-color: #333333;
+  --accent-color: #2ecc71; /* Green */
 }
 
+.kitchen-container {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-white);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* --- Header --- */
 .kitchen-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  padding: 20px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .kitchen-header h1 {
-  color: #333;
   margin: 0;
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  color: var(--text-white);
 }
 
-.tracking-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tracking-info span {
-  background: #e9ecef;
-  padding: 8px 15px;
-  border-radius: 8px;
-  font-weight: 500;
-  color: #666;
+.subtitle {
+  color: var(--text-muted);
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
 }
 
 .refresh-btn {
-  background: #667eea;
-  color: white;
-  border: none;
+  background: #333;
+  color: var(--text-white);
+  border: 1px solid var(--border-color);
   padding: 10px 20px;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
 .refresh-btn:hover {
-  background: #5a67d8;
-  transform: translateY(-1px);
+  background: #444;
 }
 
+/* --- Grid Layout --- */
 .orders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
+/* --- Order Card --- */
 .order-card {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
 }
 
 .order-card:hover {
-  transform: translateY(-4px);
+  border-color: #555;
+  transform: translateY(-2px);
 }
 
+/* --- Card Header --- */
 .order-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-  background: #f8f9fa;
+  margin-bottom: 15px;
 }
 
-.order-info h3 {
-  color: #333;
-  margin: 0 0 8px 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-.order-info p {
-  color: #666;
-  margin: 4px 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.order-status {
+.header-left {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+}
+
+.order-id {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+.order-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .status-badge {
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
+/* --- Table Info --- */
+.table-info {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-white);
+  margin-bottom: 15px;
+  border: 1px solid #222;
+}
+
+/* --- Items List --- */
 .order-items {
-  padding: 20px;
-}
-
-.order-items h4 {
-  color: #333;
-  margin: 0 0 15px 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  flex-grow: 1;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .order-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f1f3f4;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222;
 }
 
 .order-item:last-child {
   border-bottom: none;
 }
 
-.item-quantity {
-  background: #e9ecef;
-  color: #666;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: 600;
-  min-width: 40px;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.item-name {
-  flex: 1;
-  color: #333;
-  font-weight: 500;
-  text-align: left;
-}
-
-.item-price {
-  color: #667eea;
-  font-weight: 600;
-  font-size: 1rem;
-  min-width: 80px;
-  text-align: right;
-}
-
-.order-total {
-  padding: 20px;
-  text-align: right;
-  background: #f8f9fa;
-  border-top: 2px solid #e9ecef;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.order-actions {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.confirm-btn {
-  background: #17a2b8;
-  color: white;
-}
-
-.confirm-btn:hover {
-  background: #138496;
-}
-
-.prepare-btn {
-  background: #fd7e14;
-  color: white;
-}
-
-.prepare-btn:hover {
-  background: #e67e22;
-}
-
-.ready-btn {
-  background: #28a745;
-  color: white;
-}
-
-.ready-btn:hover {
-  background: #1e7e34;
-}
-
-.serve-btn {
-  background: #198754;
-  color: white;
-}
-
-.serve-btn:hover {
-  background: #157347;
-}
-
-.time-input {
-  padding: 8px 12px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  margin-right: 10px;
-  width: 120px;
-}
-
-.loading {
+.qty-badge {
+  background: #333;
+  color: var(--text-white);
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  color: #666;
-  font-size: 1.2rem;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.error-message {
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  color: #721c24;
+.item-name {
+  color: #ddd;
+  font-size: 0.95rem;
+}
+
+/* --- Actions --- */
+.order-actions {
+  margin-top: auto;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+  opacity: 0.9;
+}
+
+/* Button Colors */
+.btn-confirm { background-color: #3498db; }
+.btn-prepare { background-color: #9b59b6; }
+.btn-almost { background-color: #e67e22; }
+.btn-ready { background-color: #2ecc71; color: black; }
+.btn-serve { background-color: #7f8c8d; }
+
+/* --- States --- */
+.loading-screen, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--text-muted);
+}
+
+.empty-state h3 {
+  color: var(--text-white);
+  margin-bottom: 10px;
+}
+
+.error-banner {
+  background: #c0392b;
+  color: white;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
   text-align: center;
-  font-weight: 500;
-}
-
-.no-orders {
-  text-align: center;
-  padding: 60px 20px;
-  color: #666;
-}
-
-.no-orders h3 {
-  color: #666;
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-}
-
-.no-orders p {
-  color: #999;
-  font-size: 1rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .kitchen-container {
-    padding: 10px;
-  }
-  
-  .kitchen-header {
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-  }
-  
-  .orders-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .order-card {
-    margin-bottom: 15px;
-  }
-  
-  .order-header {
-    padding: 15px;
-  }
-  
-  .order-items {
-    padding: 15px;
-  }
-  
-  .order-actions {
-    padding: 15px;
-  }
-  
-  .action-btn {
-    padding: 10px 16px;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .order-info h3 {
-    font-size: 1.2rem;
-  }
-  
-  .order-info p {
-    font-size: 0.85rem;
-  }
-  
-  .order-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-  
-  .item-name {
-    text-align: left;
-    margin-bottom: 5px;
-  }
-  
-  .item-price {
-    text-align: left;
-    min-width: auto;
-  }
 }

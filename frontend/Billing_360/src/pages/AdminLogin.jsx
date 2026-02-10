@@ -77,6 +77,7 @@ export default function AdminLogin() {
               required
               placeholder="Enter registered phone"
               className="login-input"
+              style={{backgroundColor:"#e7eaeb"}}
             />
           </div>
 
@@ -89,6 +90,8 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="login-input"
+                style={{backgroundColor:"#e7eaeb"}}
+              
             />
           </div>
 

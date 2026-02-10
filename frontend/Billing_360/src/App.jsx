@@ -59,7 +59,7 @@ function App() {
             <Route path="/food-items" element={<FoodItems />} />
             
             {/* 3. Render the correct component for the /menu path */}
-            <Route path="/menu" element={<MyMenuItem />} />
+            <Route path="/menu" element={<AdminMenu />} />
             
             <Route path="/pos" element={<div>POS Page</div>} />
             <Route path="/transaction" element={<div>Transaction Page</div>} />

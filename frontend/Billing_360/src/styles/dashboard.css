@@ -1,77 +1,70 @@
-/* ROOT VARIABLES FOR HOTELPRO LOOK */
+/* dashboard.css */
 :root {
-  --dashboard-bg: #0c0c0e;
-  --card-bg: #151518;
-  --card-border: #252529;
-  --text-primary: #ffffff;
-  --text-secondary: #88888b;
-  --accent-green: #00c853;
-  --accent-blue: #2979ff;
-  --accent-orange: #ffab40;
+  --bg-dark: #09090b;       /* Midnight background */
+  --card-bg: #121214;       /* Slightly lighter card surfaces */
+  --accent-green: #00c853;  /* HotelPro Green */
+  --border-subtle: #1f1f23; /* Subtle card borders */
+  --text-dim: #a1a1aa;      /* Dimmed labels */
 }
 
 .dashboard-container {
-  background-color: var(--dashboard-bg);
-  color: var(--text-primary);
-  padding: 30px;
+  background-color: var(--bg-dark);
+  color: white;
+  padding: 24px;
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
 }
 
-/* HEADER STYLE */
+/* Header style with search at top right */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .header-search input {
-  background: #1a1a1c;
-  border: 1px solid var(--card-border);
-  padding: 10px 20px;
-  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
   color: white;
-  width: 300px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  width: 250px;
 }
 
-/* METRICS ROW */
+/* Metrics Row: 4-column grid */
 .metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
-/* NOTE: You will need to update your Metricard.js to accept 
-   the 'color' prop and apply it to a top or left border */
-.metric-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* CHART & SECTION SECTIONS */
+/* Main Grid: 2 columns with specific 2:1 ratio */
 .dashboard-grid-main {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2fr 1fr; 
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.chart-section {
+/* Secondary Grid: Bottom Lists 1:1 ratio */
+.dashboard-grid-secondary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-section, .list-section {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: 25px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
 }
 
 .section-header h3 {
   font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-weight: 500;
 }
+
+

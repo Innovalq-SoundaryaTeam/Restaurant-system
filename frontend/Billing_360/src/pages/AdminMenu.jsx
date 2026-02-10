@@ -9,7 +9,6 @@ const AdminMenu = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Check if admin is logged in
     const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/admin/login');
@@ -23,9 +22,7 @@ const AdminMenu = () => {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
       const response = await fetch('http://localhost:8000/api/admin/menu', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
       
       if (response.ok) {
@@ -42,15 +39,8 @@ const AdminMenu = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    navigate('/admin/login');
-  };
-
-  // Robust Image Resolver
   const getImageUrl = (path) => {
-    if (!path) return 'https://placehold.co/400x400/7a63f1/white?text=Tasty+Food';
+    if (!path) return 'https://placehold.co/400x400/121212/00c853?text=No+Image';
     if (path.startsWith('http')) return path;
     const cleanPath = path.replace(/^\//, ''); 
     return `http://localhost:8000/${cleanPath}`;
@@ -64,46 +54,44 @@ const AdminMenu = () => {
           <p className="subtitle">{menuItems.length} items currently in catalog</p>
         </div>
         <div className="header-actions">
-          <button onClick={fetchMenuItems} className="refresh-btn">🔄 Refresh</button>
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <button onClick={fetchMenuItems} className="refresh-btn">🔄 Refresh List</button>
         </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
-        <div className="loading">Loading live menu data...</div>
+        <div className="loading-container">
+          <div className="loader"></div>
+          <p>Syncing with Kitchen...</p>
+        </div>
       ) : (
         <div className="menu-grid">
           {menuItems.map(item => (
             <div key={item.id} className="menu-item-card view-only">
-              <div className="item-header">
-                <h3>{item.name}</h3>
-                <span className={`availability-badge ${item.is_available ? 'available' : 'unavailable'}`}>
-                  {item.is_available ? 'Live' : 'Hidden'}
-                </span>
-              </div>
-              
               <div className="item-image">
                 <img 
                   src={getImageUrl(item.image_url)} 
                   alt={item.name} 
-                  onError={(e) => { e.target.src = 'https://placehold.co/400x400/7a63f1/white?text=No+Image'; }} 
+                  onError={(e) => { e.target.src = 'https://placehold.co/400x400/121212/00c853?text=No+Image'; }} 
                 />
+                <span className={`availability-badge ${item.is_available ? 'available' : 'unavailable'}`}>
+                  {item.is_available ? '● Live' : '○ Hidden'}
+                </span>
               </div>
 
               <div className="item-details">
                 <div className="price-row">
+                  <h3>{item.name}</h3>
                   <p className="price">₹{parseFloat(item.price).toFixed(2)}</p>
-                  <p className="category-tag">{item.category}</p>
                 </div>
                 
+                <p className="category-tag">{item.category}</p>
                 <p className="description">{item.description || 'No description provided.'}</p>
                 
                 <div className="meta-info">
-                  <span title="Dietary Info">🥗 {item.dietary_info}</span>
-                  <span title="Spicy Level">🌶️ {item.spicy_level}</span>
-                  <span title="Prep Time">⏱️ {item.preparation_time}m</span>
+                  <span title="Dietary Info">🥗 {item.dietary_info || 'Veg'}</span>
+                  <span title="Prep Time">⏱️ {item.preparation_time || '15'}m</span>
                 </div>
               </div>
             </div>

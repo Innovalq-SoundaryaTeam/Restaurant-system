@@ -94,7 +94,7 @@ const CustomerPage = () => {
 
           {/* Table Number */}
           <div className="form-group">
-            <label>Table Number *</label>
+            <label style={{color:"white"}}>Table Number *</label>
             <input
               type="text"
               value={tableNumber}
@@ -102,6 +102,7 @@ const CustomerPage = () => {
               placeholder="Enter table number"
               className={errors.tableNumber ? 'error' : ''}
               readOnly={isTableFromUrl}
+              
             />
             {errors.tableNumber && (
               <span className="error-message">{errors.tableNumber}</span>
@@ -113,7 +114,7 @@ const CustomerPage = () => {
 
           {/* Name */}
           <div className="form-group">
-            <label>Full Name *</label>
+            <label style={{color:"white"}}>Full Name *</label>
             <input
               type="text"
               name="name"
@@ -129,7 +130,7 @@ const CustomerPage = () => {
 
           {/* Phone */}
           <div className="form-group">
-            <label>Phone Number *</label>
+            <label style={{color:"white"}}>Phone Number *</label>
             <input
               type="tel"
               name="phone_number"
@@ -145,7 +146,7 @@ const CustomerPage = () => {
 
           {/* Email */}
           <div className="form-group">
-            <label>Email</label>
+            <label >Email</label>
             <input
               type="email"
               name="email"

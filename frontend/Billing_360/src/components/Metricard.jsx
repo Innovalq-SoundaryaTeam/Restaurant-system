@@ -1,13 +1,28 @@
+import { FaShoppingCart, FaDollarSign, FaBox, FaUsers } from "react-icons/fa";
 
+export default function Metricard({ title, value, color, trend, iconType }) {
+  // Mapping icons to types
+  const icons = {
+    order: <FaShoppingCart />,
+    revenue: <FaDollarSign />,
+    stock: <FaBox />,
+    staff: <FaUsers />
+  };
 
-export default function MetricCard({ title, value }) {
   return (
-    <>
-    <div className="card">
-      <h2>{value}</h2>
-      <p>{title}</p>
-      <img src="https://i.pinimg.com/1200x/a7/9d/8b/a79d8b15f5de0fc0137382cb9ad283fa.jpg" alt=""  height={110} width="60%" style={{paddingTop:"20px"}}/>
+    <div className="metric-card" style={{ borderLeft: `4px solid ${color}` }}>
+      <div className="card-content">
+        <div className="card-info">
+          <p className="card-title">{title}</p>
+          <h2 className="card-value">{value}</h2>
+          <p className="card-trend" style={{ color: trend.includes('+') ? '#00c853' : '#ffab40' }}>
+            {trend}
+          </p>
+        </div>
+        <div className="card-icon" style={{ backgroundColor: `${color}22`, color: color }}>
+          {icons[iconType]}
+        </div>
+      </div>
     </div>
-    </>
   );
 }

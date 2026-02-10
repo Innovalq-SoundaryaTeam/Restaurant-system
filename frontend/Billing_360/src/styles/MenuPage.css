@@ -1,166 +1,314 @@
+/* src/styles/MenuPage.css */
+
+/* --- 1. MODERN THEME VARIABLES (Strict Black & Green) --- */
 :root {
-  --theme-purple: #7a63f1;
-  --theme-gradient: linear-gradient(135deg, #7a63f1 0%, #a484f7 100%);
-  --bg-light: #f8f9fe;
-  --text-primary: #2d3436;
-  --text-secondary: #636e72;
+  --primary: #2ecc71;          /* Vivid Emerald Green */
+  --bg-app: #0a0a0a;           /* Deepest Black */
+  --surface: #161616;          /* Surface Gray */
+  --surface-hover: #1f1f1f;    /* Lighter Gray for Hovers */
+  
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+}
+
+/* --- 2. GLOBAL RESET & TYPOGRAPHY --- */
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 .menu-page-wrapper {
-  background-color: var(--bg-light);
+  padding-bottom: 140px;
   min-height: 100vh;
-  padding-bottom: 120px;
 }
 
-/* HERO SECTION */
+/* --- 3. HERO SECTION --- */
 .hero-banner {
-  background: var(--theme-gradient);
-  padding: 50px 20px;
-  text-align: center;
-  color: white;
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
-  box-shadow: 0 10px 30px rgba(122, 99, 241, 0.2);
+  padding: 60px 24px 40px;
+  background: var(--bg-app); /* Flat black background */
+  text-align: left;
 }
 
-.hero-banner h1 {
-  font-size: 2.2rem;
-  margin-bottom: 12px;
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-inner h1 {
+  font-size: 3rem;
   font-weight: 800;
+  margin: 0 0 16px 0;
+  line-height: 1.1;
+  color: var(--text-primary); /* Solid white title */
 }
 
 .table-pill {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  padding: 10px 20px;
-  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  border-radius: 100px;
   font-size: 0.9rem;
 }
 
-.pill-bold { font-weight: 800; }
-.pill-sep { opacity: 0.4; }
+.pill-bold {
+  color: var(--primary); /* Green Accent */
+  font-weight: 700;
+  margin-right: 8px;
+}
 
-/* GRID & CARDS */
+.pill-sep {
+  opacity: 0.3;
+  margin-right: 8px;
+}
+
+/* --- 4. CONTENT LAYOUT --- */
 .content-container {
   max-width: 1200px;
-  margin: -30px auto 0;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .item-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
+/* --- 5. CARD DESIGN (No Green Border on Hover) --- */
 .menu-item-card {
-  background: white;
-  border-radius: 24px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-.menu-item-card:hover { transform: translateY(-8px); }
+.menu-item-card:hover {
+  transform: translateY(-4px);
+  background: var(--surface-hover);
+  /* Border color remains subtle on hover, removed the green */
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
 
+/* Full-width Image Area */
 .image-box {
-  height: 200px;
-  background: #eee;
+  height: 220px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .image-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
 }
 
-.item-info { padding: 20px; }
-.item-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
-.item-description { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; height: 40px; overflow: hidden; }
+.menu-item-card:hover .image-box img {
+  transform: scale(1.08);
+}
 
+/* Gradient Overlay on Image */
+.image-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, var(--surface), transparent);
+}
+
+/* Content Area */
+.item-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+  z-index: 2;
+  margin-top: -40px;
+}
+
+.item-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.item-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer & Actions */
 .item-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: auto;
 }
 
-.price-tag { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); }
-
-/* STEPPER CONTROLS */
-.control-stepper {
-  border: 2px solid var(--theme-purple);
-  border-radius: 14px;
-  height: 42px;
-  min-width: 110px;
-  display: flex;
+.price-tag {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
 }
 
+/* Modern Button Styling (Green Accent) */
 .add-btn-flat {
-  width: 100%;
-  background: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
   border: none;
-  color: var(--theme-purple);
-  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.add-btn-flat:hover {
+  background: var(--primary); /* Green on hover */
+  color: black;
+}
+
+/* Stepper Control */
+.control-stepper {
+  display: flex;
+  align-items: center;
+  background: #222;
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.control-stepper.active {
+  background: var(--primary); /* Green when active */
 }
 
 .control-stepper button {
-  background: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   border: none;
-  color: var(--theme-purple);
-  flex: 1;
-  font-size: 1.4rem;
-  font-weight: 700;
+  background: rgba(0,0,0,0.2);
+  color: white;
+  font-size: 1.2rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.qty-count { line-height: 40px; font-weight: 800; color: var(--theme-purple); width: 30px; text-align: center; }
+.control-stepper.active button {
+  color: black;
+}
 
-/* STICKY CART BAR */
+.control-stepper .qty-count {
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.control-stepper.active .qty-count {
+  color: black;
+}
+
+/* --- 6. FLOATING CART BAR (Green Accent) --- */
 .sticky-cart-bar {
   position: fixed;
-  bottom: 25px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 550px;
-  background: white;
-  border-radius: 24px;
-  padding: 15px 25px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  max-width: 500px;
   z-index: 1000;
+  animation: floatUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes floatUp {
+  from { transform: translate(-50%, 100px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
 }
 
 .bar-inner {
+  background: #1f1f1f; /* Solid dark background */
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 8px 8px 24px;
+  border-radius: 100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
-.bar-stats { display: flex; flex-direction: column; }
-.stats-qty { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); }
-.stats-total { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); }
+.bar-stats {
+  display: flex;
+  flex-direction: column;
+}
 
-.checkout-btn-purple {
-  background: var(--theme-gradient);
-  border: none;
-  padding: 14px 28px;
-  border-radius: 16px;
+.stats-qty {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.stats-total {
+  font-size: 1.2rem;
+  font-weight: 700;
   color: white;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(122, 99, 241, 0.3);
 }
 
+/* Renamed class visually, kept name for React support */
+.checkout-btn-purple {
+  background: var(--primary); /* Green Button */
+  color: black;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.checkout-btn-purple:hover {
+  transform: scale(1.04);
+}
+
+/* Loading */
 .loading-container {
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 800;
-  color: var(--theme-purple);
+  height: 100vh;
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 600;
 }

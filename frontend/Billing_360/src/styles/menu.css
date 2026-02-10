@@ -212,7 +212,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background-color: green;
   color: white;
   border: none;
   padding: 1rem 2rem;

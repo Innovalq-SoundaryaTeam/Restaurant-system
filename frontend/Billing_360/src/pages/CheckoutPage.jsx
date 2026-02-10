@@ -93,10 +93,7 @@ const CheckoutPage = () => {
       localStorage.setItem('lastOrder', JSON.stringify(orderDataForStorage));
       localStorage.removeItem('cart');
       
-      // Redirect to kitchen panel
-      setTimeout(() => {
-        navigate('/kitchen');
-      }, 2000);
+     
       
     } catch (error) {
       console.error('Error placing order:', error);

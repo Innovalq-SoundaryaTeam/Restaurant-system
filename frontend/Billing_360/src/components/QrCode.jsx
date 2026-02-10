@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-
+import "../styles/QrCode.css"
 const QrCode = ({ qrValue = "restaurant_id:rest_001", size = 250, showDownload = true }) => {
   const qrRef = useRef();
 
@@ -15,7 +15,7 @@ const QrCode = ({ qrValue = "restaurant_id:rest_001", size = 250, showDownload =
   };
 
   return (
-    <div className="qr-code-container">
+    <div className="qr-code-container" style={{justifyContent:"center",alignItems:"center"}}>
       <div ref={qrRef} className="qr-code-wrapper">
         <QRCodeCanvas
           value={qrValue}
