@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import "../styles/MenuPage.css";
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -11,174 +12,130 @@ export default function MenuPage() {
   const restaurantId = searchParams.get("restaurant_id") || "REST001";
   const tableFromUrl = searchParams.get("table");
 
-  // =========================
-  // STANDARDIZE TABLE NUMBER HANDLING
-  // =========================
   useEffect(() => {
-    // Store table number from URL to localStorage (single source of truth)
     if (tableFromUrl && !localStorage.getItem('tableNumber')) {
       localStorage.setItem('tableNumber', tableFromUrl);
     }
-    
-    // Ensure restaurantId is also stored
     if (!localStorage.getItem('restaurantId')) {
       localStorage.setItem('restaurantId', restaurantId);
     }
   }, [tableFromUrl, restaurantId]);
 
-  // Get table number from localStorage (primary source)
-  const tableNumber = localStorage.getItem('tableNumber') || 'Not specified';
+  const tableNumber = localStorage.getItem('tableNumber') || 'T4';
 
-  // --- 1. FETCH DATA FROM FASTAPI --- 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/menu");
-        if (response.ok) {
-          const data = await response.json();
-          setMenuItems(data);
-        } else {
-          console.error("Failed to fetch menu");
-        }
-      } catch (error) {
-        console.error("Error connecting to backend:", error);
-      } finally {
-        setLoading(false);
+  const fetchMenu = useCallback(async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/menu");
+      if (response.ok) {
+        const data = await response.json();
+        setMenuItems(data);
       }
-    };
-
-    fetchMenu();
+    } catch (error) {
+      console.error("Connection error:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // --- 2. CART HANDLERS ---
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
+
+  // Robust Image Resolver
+  const getImageUrl = (path) => {
+    if (!path) return "https://placehold.co/400x400/7a63f1/white?text=Tasty+Food"; 
+    if (path.startsWith("http")) return path;
+    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+    return `http://127.0.0.1:8000/${cleanPath}`;
+  };
+
+  // Cart Logic
   const addToCart = (item) => {
-    setCartItems(prevCart => {
-      const existingItem = prevCart.find(cartItem => cartItem.id === item.id);
-      if (existingItem) {
-        return prevCart.map(cartItem =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
-      }
-      return [...prevCart, { ...item, quantity: 1 }];
+    setCartItems(prev => {
+      const existing = prev.find(i => i.id === item.id);
+      if (existing) return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+      return [...prev, { ...item, quantity: 1 }];
     });
   };
 
   const removeFromCart = (itemId) => {
-    setCartItems(prevCart => {
-      const existingItem = prevCart.find(item => item.id === itemId);
-      if (existingItem.quantity === 1) {
-        return prevCart.filter(item => item.id !== itemId);
-      }
-      return prevCart.map(item =>
-        item.id === itemId
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      );
+    setCartItems(prev => {
+      const existing = prev.find(i => i.id === itemId);
+      if (existing?.quantity === 1) return prev.filter(i => i.id !== itemId);
+      return prev.map(i => i.id === itemId ? { ...i, quantity: i.quantity - 1 } : i);
     });
   };
 
-  const getItemQuantity = (itemId) => {
-    const item = cartItems.find(cartItem => cartItem.id === itemId);
-    return item ? item.quantity : 0;
-  };
+  const getItemQuantity = (itemId) => cartItems.find(i => i.id === itemId)?.quantity || 0;
+  const getTotalItems = () => cartItems.reduce((acc, i) => acc + i.quantity, 0);
+  const getTotalPrice = () => cartItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
 
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
-
-  const handleProceedToCheckout = () => {
-    if (cartItems.length === 0) {
-      alert('Please add items to your cart before proceeding.');
-      return;
-    }
-    
-    // Store cart in localStorage for checkout page
+  const handleProceed = () => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
     navigate('/checkout');
   };
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "https://placehold.co/400x300/1a1a1a/white?text=Tasty+Food"; 
-    if (imagePath.startsWith("http")) return imagePath;
-    return `http://127.0.0.1:8000/${imagePath}`;
-  };
-
-  if (loading) return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
+  if (loading) return <div className="loading-container"><span>Loading Menu...</span></div>;
 
   return (
-    <div className="menu-container">
-      <div className="static-header-wrapper">
-        <header className="menu-header">
+    <div className="menu-page-wrapper">
+      <header className="hero-banner">
+        <div className="hero-inner">
           <h1>Menu Items</h1>
-          <p>Table: {tableNumber} | Premium selection, served fast.</p>
-        </header>
-      </div>
+          <div className="table-pill">
+            <span className="pill-bold">TABLE {tableNumber}</span>
+            <span className="pill-sep">|</span>
+            <span>Premium selection, served fast.</span>
+          </div>
+        </div>
+      </header>
 
-      <div className="scrollable-menu-area">
-        <div className="menu-grid">
-          {menuItems.map((item) => (
-            <div key={item.id} className="menu-card">
-              <div className="card-image-container">
-                <img
-                  src={getImageUrl(item.image_url)}
-                  alt={item.name}
-                  className="card-image" style={{width:"250px", height:"250px"}}
-                />
-                <span className="card-category">
-                  {item.category || "Special"}
-                </span>
-              </div>
-
-              <div className="card-content">
-                <h2 className="card-title">{item.name}</h2>
-                <p className="card-description">
-                  {item.description ||
-                    "A delicious choice from our kitchen."}
-                </p>
-
-                <div className="card-footer">
-                  <span className="card-price">₹{item.price}</span>
-                  <div className="quantity-controls">
-                    <button 
-                      onClick={() => removeFromCart(item.id)}
-                      className="quantity-btn"
-                      disabled={getItemQuantity(item.id) === 0}
-                    >
-                      -
-                    </button>
-                    <span className="quantity-display">
-                      {getItemQuantity(item.id)}
-                    </span>
-                    <button 
-                      onClick={() => addToCart(item)}
-                      className="quantity-btn"
-                    >
-                      +
-                    </button>
+      <main className="content-container">
+        <div className="item-grid">
+          {menuItems.map((item) => {
+            const qty = getItemQuantity(item.id);
+            return (
+              <div key={item.id} className="menu-item-card">
+                <div className="image-box">
+                  <img 
+                    src={getImageUrl(item.image_url)} 
+                    alt={item.name} 
+                    onError={(e) => { e.target.src = "https://placehold.co/400x400/7a63f1/white?text=Image+Not+Found"; }}
+                  />
+                </div>
+                <div className="item-info">
+                  <h2 className="item-title">{item.name}</h2>
+                  <p className="item-description">{item.description || "Freshly made for you."}</p>
+                  <div className="item-footer">
+                    <span className="price-tag">₹{item.price}</span>
+                    <div className={`control-stepper ${qty > 0 ? "active" : ""}`}>
+                      {qty > 0 ? (
+                        <>
+                          <button onClick={() => removeFromCart(item.id)}>–</button>
+                          <span className="qty-count">{qty}</span>
+                          <button onClick={() => addToCart(item)}>+</button>
+                        </>
+                      ) : (
+                        <button className="add-btn-flat" onClick={() => addToCart(item)}>ADD</button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </div>
+      </main>
 
-      {/* Floating Cart Summary */}
       {cartItems.length > 0 && (
-        <div className="floating-cart">
-          <div className="cart-summary">
-            <span>🛒 Cart ({getTotalItems()} items) - ₹{getTotalPrice().toFixed(2)}</span>
-            <button 
-              onClick={handleProceedToCheckout}
-              className="checkout-btn"
-            >
-              Proceed to Checkout
+        <div className="sticky-cart-bar">
+          <div className="bar-inner">
+            <div className="bar-stats">
+              <span className="stats-qty">{getTotalItems()} ITEMS</span>
+              <span className="stats-total">₹{getTotalPrice().toFixed(2)}</span>
+            </div>
+            <button onClick={handleProceed} className="checkout-btn-purple">
+              View Cart <span>→</span>
             </button>
           </div>
         </div>

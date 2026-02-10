@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/KitchenPanel.css';
 
 const KitchenPanel = () => {
@@ -6,17 +6,13 @@ const KitchenPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchOrders();
-    // Poll every 10 seconds for new orders
-    const interval = setInterval(fetchOrders, 10000);
-    return () => clearInterval(interval);
-  }, []);
+  const API_URL = "http://127.0.0.1:8000/api/kitchen/orders";
+  const REST_ID = "REST001";
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async (isInitial = false) => {
     try {
-      setLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/api/kitchen/orders?restaurant_id=REST001");
+      if (isInitial) setLoading(true);
+      const response = await fetch(`${API_URL}?restaurant_id=${REST_ID}`);
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -24,90 +20,69 @@ const KitchenPanel = () => {
       } else {
         throw new Error('Failed to fetch orders');
       }
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      setError('Failed to load orders. Please try again.');
+    } catch (err) {
+      setError('Connection error. Retrying...');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  useEffect(() => {
+    fetchOrders(true);
+    const interval = setInterval(() => fetchOrders(false), 10000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
+
+  // FIX: Explicitly send Uppercase status to match MySQL ENUM
   const updateOrderStatus = async (orderId, newStatus) => {
+    const uppercaseStatus = newStatus.toUpperCase();
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/kitchen/orders/${orderId}`, {
+      const response = await fetch(`${API_URL}/${orderId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: uppercaseStatus }),
       });
-
       if (response.ok) {
-        // Refresh orders
-        fetchOrders();
+        fetchOrders(false);
       } else {
-        throw new Error('Failed to update order status');
+        const errorData = await response.json();
+        console.error("Server rejected status:", errorData);
+        alert(`Failed to update to ${uppercaseStatus}. Check if status exists in DB.`);
       }
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      alert('Failed to update order status');
+    } catch (err) {
+      alert("Status update failed. Check network.");
     }
   };
 
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'pending': return '#ff9800';
-      case 'confirmed': return '#2196f3';
-      case 'preparing': return '#9c27b0';
-      case 'ready': return '#4caf50';
-      case 'served': return '#607d8b';
-      default: return '#666';
+    switch (status?.toUpperCase()) {
+      case 'PENDING': return '#17a2b8';
+      case 'CONFIRMED': return '#007bff';
+      case 'PREPARING': return '#fd7e14';
+      case 'ALMOST_DONE': return '#6f42c1';
+      case 'READY': return '#28a745';
+      case 'SERVED': return '#6c757d';
+      default: return '#343a40';
     }
-  };
-
-  const getStatusDisplay = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'pending': return 'Pending';
-      case 'confirmed': return 'Confirmed';
-      case 'preparing': return 'Preparing';
-      case 'ready': return 'Ready';
-      case 'served': return 'Served';
-      default: return status;
-    }
-  };
-
-  const formatTime = (timeString) => {
-    if (!timeString) return 'N/A';
-    const date = new Date(timeString);
-    return date.toLocaleTimeString();
-  };
-
-  const formatCurrency = (amount) => {
-    return `$${parseFloat(amount || 0).toFixed(2)}`;
   };
 
   if (loading && orders.length === 0) {
-    return (
-      <div className="kitchen-container">
-        <div className="loading">Loading orders...</div>
-      </div>
-    );
+    return <div className="loading">Initializing Kitchen Feed...</div>;
   }
 
   return (
     <div className="kitchen-container">
-      <div className="kitchen-header">
-        <h1>Kitchen Orders</h1>
-        <button onClick={fetchOrders} className="refresh-btn">
-          🔄 Refresh
-        </button>
-      </div>
-
-      {error && (
-        <div className="error-message">
-          {error}
+      <header className="kitchen-header">
+        <div className="order-info">
+          <h1>Kitchen Orders</h1>
+          <p>{orders.length} Active Tickets</p>
         </div>
-      )}
+        <button onClick={() => fetchOrders(true)} className="refresh-btn">
+          🔄 Manual Refresh
+        </button>
+      </header>
+
+      {error && <div className="error-message">{error}</div>}
 
       <div className="orders-grid">
         {orders.map(order => (
@@ -115,71 +90,30 @@ const KitchenPanel = () => {
             <div className="order-header">
               <div className="order-info">
                 <h3>Order #{order.order_number}</h3>
-                <p>Table: {order.table_number || 'N/A'}</p>
-                <p>Customer: {order.customer_name}</p>
-                <p>Time: {formatTime(order.created_at)}</p>
+                <p><strong>Table {order.table_number || 'Takeout'}</strong> • {order.customer_name}</p>
+                <p>{new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
               <div className="order-status">
                 <span 
                   className="status-badge" 
                   style={{ backgroundColor: getStatusColor(order.status) }}
                 >
-                  {getStatusDisplay(order.status)}
+                  {order.status}
                 </span>
               </div>
             </div>
 
             <div className="order-items">
-              <h4>Items:</h4>
-              {order.items?.map((item, index) => (
-                <div key={index} className="order-item">
+              {order.items?.map((item, idx) => (
+                <div key={idx} className="order-item">
                   <span className="item-quantity">{item.quantity}x</span>
                   <span className="item-name">{item.name}</span>
-                  <span className="item-price">{formatCurrency(item.price)}</span>
                 </div>
               ))}
             </div>
 
-            <div className="order-total">
-              <strong>Total: {formatCurrency(order.total_price)}</strong>
-            </div>
-
             <div className="order-actions">
-              {order.status?.toLowerCase() === 'pending' && (
-                <button 
-                  onClick={() => updateOrderStatus(order.id, 'confirmed')}
-                  className="action-btn confirm-btn"
-                >
-                  ✓ Confirm Order
-                </button>
-              )}
-              
-              {order.status?.toLowerCase() === 'confirmed' && (
-                <button 
-                  onClick={() => updateOrderStatus(order.id, 'preparing')}
-                  className="action-btn prepare-btn"
-                >
-                  👨‍🍳 Start Preparing
-                </button>
-              )}
-              
-              {order.status?.toLowerCase() === 'preparing' && (
-                <button 
-                  onClick={() => updateOrderStatus(order.id, 'ready')}
-                  className="action-btn ready-btn"
-                >
-                  ✓ Mark Ready
-                </button>
-              )}
-              
-              {order.status?.toLowerCase() === 'ready' && (
-                <button 
-                  onClick={() => updateOrderStatus(order.id, 'served')}
-                  className="action-btn serve-btn"
-                >
-                  ✓ Mark Served
-                </button>
-              )}
+              <ActionButton order={order} onUpdate={updateOrderStatus} />
             </div>
           </div>
         ))}
@@ -187,12 +121,32 @@ const KitchenPanel = () => {
 
       {orders.length === 0 && !loading && (
         <div className="no-orders">
-          <h3>No active orders</h3>
-          <p>All orders have been completed</p>
+          <h3>No Active Orders</h3>
+          <p>Kitchen is currently clear.</p>
         </div>
       )}
     </div>
   );
+};
+
+const ActionButton = ({ order, onUpdate }) => {
+  // Logic is cleaner using toUpperCase() to match DB exactly
+  const status = order.status?.toUpperCase();
+
+  switch (status) {
+    case 'PENDING':
+      return <button className="action-btn confirm-btn" onClick={() => onUpdate(order.id, 'CONFIRMED')}>CONFIRM ORDER</button>;
+    case 'CONFIRMED':
+      return <button className="action-btn prepare-btn" onClick={() => onUpdate(order.id, 'PREPARING')}>START PREPARING</button>;
+    case 'PREPARING':
+      return <button className="action-btn" style={{backgroundColor: '#6f42c1', color: 'white'}} onClick={() => onUpdate(order.id, 'ALMOST_DONE')}>⏲️ ALMOST DONE</button>;
+    case 'ALMOST_DONE':
+      return <button className="action-btn ready-btn" onClick={() => onUpdate(order.id, 'READY')}>MARK AS READY</button>;
+    case 'READY':
+      return <button className="action-btn serve-btn" onClick={() => onUpdate(order.id, 'SERVED')}>MARK SERVED</button>;
+    default:
+      return null;
+  }
 };
 
 export default KitchenPanel;

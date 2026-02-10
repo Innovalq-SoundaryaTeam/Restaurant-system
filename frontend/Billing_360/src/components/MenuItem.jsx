@@ -1,70 +1,48 @@
 import React from 'react';
 import './MenuItem.css';
 
-const MenuItem = ({ item, onAddToCart, cartQuantity, onRemoveFromCart }) => {
-  const handleAddToCart = () => {
-    onAddToCart(item);
+const MenuItem = ({ item }) => {
+  // 1. Image Resolver: Handles backend paths or placeholders
+  const getImageUrl = (path) => {
+    if (!path) return 'https://placehold.co/400x400/7a63f1/white?text=Tasty+Food';
+    if (path.startsWith('http')) return path;
+    const cleanPath = path.replace(/^\//, ''); 
+    return `http://127.0.0.1:8000/${cleanPath}`;
   };
 
-  const handleRemoveFromCart = () => {
-    onRemoveFromCart(item.id);
-  };
+  // 2. Safeguard: Return null if item data is missing
+  if (!item) return null;
 
   return (
-    <div className="menu-item">
-      <div className="item-image">
+    <div className={`menu-item-card ${!item.is_available ? 'unavailable' : ''}`}>
+      <div className="item-image-box">
         <img 
-          src={item.image_url || '/placeholder-food.jpg'} 
+          src={getImageUrl(item.image_url)} 
           alt={item.name}
           onError={(e) => {
-            e.target.src = '/placeholder-food.jpg';
+            e.target.src = 'https://placehold.co/400x400/7a63f1/white?text=No+Image';
           }}
         />
         {!item.is_available && (
           <div className="unavailable-overlay">
-            <span>Unavailable</span>
+            <span>Sold Out</span>
           </div>
         )}
       </div>
       
-      <div className="item-details">
-        <h3 className="item-name">{item.name}</h3>
-        <p className="item-description">{item.description}</p>
-        <div className="item-footer">
-          <span className="item-price">₹{item.price.toFixed(2)}</span>
+      <div className="item-details-box">
+        <h3 className="item-name">{item.name || 'Untitled Item'}</h3>
+        <p className="item-description">{item.description || 'No description available.'}</p>
+        
+        <div className="item-footer-row">
+          {/* Formats price to 2 decimal places */}
+          <span className="item-price">₹{parseFloat(item.price || 0).toFixed(2)}</span>
           
-          {item.is_available ? (
-            <div className="cart-controls">
-              {cartQuantity > 0 ? (
-                <div className="quantity-controls">
-                  <button 
-                    onClick={handleRemoveFromCart}
-                    className="quantity-btn minus"
-                  >
-                    -
-                  </button>
-                  <span className="quantity">{cartQuantity}</span>
-                  <button 
-                    onClick={handleAddToCart}
-                    className="quantity-btn plus"
-                  >
-                    +
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  onClick={handleAddToCart}
-                  className="add-to-cart-btn"
-                >
-                  Add to Cart
-                </button>
-              )}
-            </div>
-          ) : (
-            <button className="add-to-cart-btn disabled" disabled>
-              Unavailable
-            </button>
-          )}
+          <div className="item-status-area">
+            {item.is_available === false && (
+              <span className="out-of-stock">Currently Unavailable</span>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,10 +1,11 @@
 import enum
 
 class OrderStatus(str, enum.Enum):
-    PENDING = "pending"
-    CONFIRMED = "confirmed" 
-    PREPARING = "preparing"
-    ALMOST_DONE = "almost_done"
-    READY = "ready"
-    CANCELLED = "cancelled"
-    PAID = "paid"
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED" 
+    PREPARING = "PREPARING"
+    ALMOST_DONE = "ALMOST_DONE"
+    READY = "READY"
+    SERVED = "SERVED"
+    CANCELLED = "CANCELLED"
+    PAID = "PAID"
