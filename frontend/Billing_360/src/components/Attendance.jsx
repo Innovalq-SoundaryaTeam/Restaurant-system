@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // IMPORT AXIOS
 import { Container, Row, Col, Card, Button, Table, Form, Modal, InputGroup } from 'react-bootstrap';
-import '../styles/attendance.css';
+import '../styles/Attendance.css';
 import logo from '../assets/logo360.jpeg';
 
 // ... (Keep your DonutChart component exactly as it was) ...

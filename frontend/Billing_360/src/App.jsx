@@ -34,7 +34,7 @@ import OrderPlacedPage from './pages/OrderPlacedPage';
 import KitchenPanel from './pages/KitchenPanel';
 import AdminLogin from './pages/AdminLogin';
 import AdminMenu from './pages/AdminMenu';
-import Attendance from './components/Attendance';
+import Attendance from './components/Attendance.jsx';
 
 // 2. Namespace MUI import to prevent overwriting your component
 
@@ -74,7 +74,7 @@ function App() {
             <Route path="/food-items" element={<FoodItems />} />
             
             {/* 3. Render the correct component for the /menu path */}
-            
+
             <Route path="/menu" element={<AdminMenu />} />
             <Route path="/pos" element={<div>POS Page</div>} />
             <Route path="/transaction" element={<div>Transaction Page</div>} />
