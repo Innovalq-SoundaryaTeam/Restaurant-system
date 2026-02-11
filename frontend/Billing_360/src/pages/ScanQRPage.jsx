@@ -33,7 +33,7 @@ const ScanQRPage = () => {
     localStorage.setItem("tableNumber", tableNumber);
     localStorage.setItem("restaurantId", "REST001");
     // Navigate to the menu
-    navigate(`/usermenu?restaurant_id=REST001&table=${tableNumber}`);
+    navigate(`/customer?restaurant_id=REST001&table=${tableNumber}`);
   };
 
   return (

@@ -91,7 +91,8 @@ const TableEntryPage = () => {
                 padding: '12px',
                 border: `2px solid ${errors.tableNumber ? '#dc3545' : '#ddd'}`,
                 borderRadius: '8px',
-                fontSize: '16px'
+                fontSize: '16px',
+                color: 'white'
               }}
             />
             {errors.tableNumber && (

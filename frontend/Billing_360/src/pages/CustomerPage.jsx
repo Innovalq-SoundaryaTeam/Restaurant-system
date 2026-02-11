@@ -101,6 +101,7 @@ const CustomerPage = () => {
               onChange={handleTableChange}
               placeholder="Enter table number"
               className={errors.tableNumber ? 'error' : ''}
+              style={{color:'white'}}
               readOnly={isTableFromUrl}
               
             />
@@ -122,6 +123,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter your name"
               className={errors.name ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.name && (
               <span className="error-message">{errors.name}</span>
@@ -138,6 +140,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter phone number"
               className={errors.phone_number ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.phone_number && (
               <span className="error-message">{errors.phone_number}</span>
@@ -154,6 +157,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter email (optional)"
               className={errors.email ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.email && (
               <span className="error-message">{errors.email}</span>

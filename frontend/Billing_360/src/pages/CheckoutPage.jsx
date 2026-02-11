@@ -9,14 +9,11 @@ const CheckoutPage = () => {
   const [error, setError] = useState(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
-  
-  // New state for payment method selection
   const [paymentMethod, setPaymentMethod] = useState('upi'); 
   
   const navigate = useNavigate();
 
   const tableNumber = localStorage.getItem('tableNumber') || 'Not specified';
-  const restaurantId = localStorage.getItem('restaurantId') || 'REST001';
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -33,10 +30,6 @@ const CheckoutPage = () => {
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
-
-  const getTotalItems = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
   };
 
   const handlePlaceOrder = async () => {
@@ -64,14 +57,12 @@ const CheckoutPage = () => {
           quantity: item.quantity,
           special_instructions: ""
         })),
-        payment_method: paymentMethod // Dynamic selection sent to backend
+        payment_method: paymentMethod 
       };
 
       const response = await fetch("http://127.0.0.1:8000/api/orders", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
       });
 
@@ -81,36 +72,37 @@ const CheckoutPage = () => {
       }
 
       const result = await response.json();
-      setOrderDetails(result);
-      setOrderPlaced(true);
       
+      // --- RECTIFICATION START: Align keys with OrderPlacedPage ---
       const orderDataForStorage = {
         orderId: result.id,
         orderNumber: result.order_number,
-        total: result.total_price,
-        status: result.status
+        totalAmount: result.total_price, // Changed from 'total' to 'totalAmount'
+        status: result.status || "Pending",
+        tableNumber: tableNumber,        // Added for persistence
+        customerEmail: customerData.email, // Added for persistence
+        billUrl: result.bill_url || result.billUrl || "" // Capture bill link
       };
+
       localStorage.setItem('lastOrder', JSON.stringify(orderDataForStorage));
       localStorage.removeItem('cart');
-      
-     
+      // --- RECTIFICATION END ---
+
+      setOrderDetails(result);
+      setOrderPlaced(true);
       
     } catch (error) {
       console.error('Error placing order:', error);
-      setError(error.message || 'Failed to place order. Please try again.');
+      setError(error.message || 'Failed to place order.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBackToMenu = () => {
-    navigate('/usermenu');
-  };
+  const handleBackToMenu = () => navigate('/usermenu');
 
   const handleTrackOrder = () => {
-    if (orderDetails?.id) {
-      navigate(`/order-placed?order_id=${orderDetails.id}`);
-    }
+    navigate(`/order-placed`);
   };
 
   // Success UI
@@ -128,11 +120,11 @@ const CheckoutPage = () => {
             </div>
             <div className="summary-item">
               <span>Payment Via:</span>
-              <span className="method-badge">{paymentMethod.toUpperCase()}</span>
+              <span className="method-badge" style={{color:"black"}}>{paymentMethod.toUpperCase()}</span>
             </div>
             <div className="summary-item">
               <span>Total Amount:</span>
-              <span className="total-amount">${orderDetails.total_price?.toFixed(2) || getTotalPrice().toFixed(2)}</span>
+              <span className="total-amount">₹{Number(orderDetails.total_price).toFixed(2)}</span>
             </div>
           </div>
 
@@ -150,7 +142,6 @@ const CheckoutPage = () => {
     );
   }
 
-  // Checkout Form UI
   return (
     <div className="checkout-container">
       <div className="checkout-card">
@@ -171,10 +162,10 @@ const CheckoutPage = () => {
               <div key={item.id} className="checkout-item">
                 <div className="item-info">
                   <h4>{item.name}</h4>
-                  <p>${item.price.toFixed(2)} × {item.quantity}</p>
+                  <p>₹{item.price.toFixed(2)} × {item.quantity}</p>
                 </div>
                 <div className="item-total">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ₹{(item.price * item.quantity).toFixed(2)}
                 </div>
               </div>
             ))}
@@ -183,12 +174,11 @@ const CheckoutPage = () => {
           <div className="price-summary">
             <div className="summary-row total">
               <span>Total Amount:</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>₹{getTotalPrice().toFixed(2)}</span>
             </div>
           </div>
         </section>
 
-        {/* --- Updated Payment Section --- */}
         <section className="payment-info">
           <h2>Payment Method</h2>
           <div className="payment-selector">
@@ -205,24 +195,12 @@ const CheckoutPage = () => {
               </label>
             ))}
           </div>
-          <div className="payment-help-text">
-            {paymentMethod === 'upi' && "💡 Scan the QR code at your table or counter."}
-            {paymentMethod === 'cash' && "💡 Please pay at the counter before/after your meal."}
-            {paymentMethod === 'card' && "💡 A staff member will bring the card terminal."}
-          </div>
         </section>
 
         <div className="checkout-actions">
-          <button onClick={handleBackToMenu} className="back-btn" disabled={loading}>
-            ← Edit Order
-          </button>
-          
-          <button 
-            onClick={handlePlaceOrder}
-            className="place-order-btn"
-            disabled={loading || cart.length === 0}
-          >
-            {loading ? 'Processing...' : `Confirm & Order - $${getTotalPrice().toFixed(2)}`}
+          <button onClick={handleBackToMenu} className="back-btn" disabled={loading}>← Edit Order</button>
+          <button onClick={handlePlaceOrder} className="place-order-btn" disabled={loading}>
+            {loading ? 'Processing...' : `Confirm & Order - ₹${getTotalPrice().toFixed(2)}`}
           </button>
         </div>
       </div>
