@@ -1,7 +1,6 @@
 import { FaShoppingCart, FaDollarSign, FaBox, FaUsers } from "react-icons/fa";
 
 export default function Metricard({ title, value, color, trend, iconType }) {
-  // Mapping icons to types
   const icons = {
     order: <FaShoppingCart />,
     revenue: <FaDollarSign />,
@@ -10,8 +9,8 @@ export default function Metricard({ title, value, color, trend, iconType }) {
   };
 
   return (
-    <div className="metric-card" style={{ borderLeft: `4px solid ${color}` }}>
-      <div className="card-content">
+    <div className="metric-card" style={{ "--accent": color }}>
+      <div className="card-inner">
         <div className="card-info">
           <p className="card-title">{title}</p>
           <h2 className="card-value">{value}</h2>
@@ -19,7 +18,7 @@ export default function Metricard({ title, value, color, trend, iconType }) {
             {trend}
           </p>
         </div>
-        <div className="card-icon" style={{ backgroundColor: `${color}22`, color: color }}>
+        <div className="card-icon" style={{ backgroundColor: `${color}15`, color: color }}>
           {icons[iconType]}
         </div>
       </div>

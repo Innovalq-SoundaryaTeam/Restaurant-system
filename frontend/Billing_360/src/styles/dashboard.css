@@ -1,37 +1,17 @@
-/* dashboard.css */
-:root {
-  --bg-dark: #09090b;       /* Midnight background */
-  --card-bg: #121214;       /* Slightly lighter card surfaces */
-  --accent-green: #00c853;  /* HotelPro Green */
-  --border-subtle: #1f1f23; /* Subtle card borders */
-  --text-dim: #a1a1aa;      /* Dimmed labels */
-}
-
-.dashboard-container {
-  background-color: var(--bg-dark);
-  color: white;
-  padding: 24px;
-  min-height: 100vh;
-}
-
-/* Header style with search at top right */
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.header-search input {
-  background: var(--card-bg);
+.header-search{
+  width: 400px;
+  height: 40px;
+  border-radius: 20px;
+  background: #18181b;
   border: 1px solid var(--border-subtle);
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  width: 250px;
+  color: #fff;
+  justify-content: right;
+  padding-left: 1%;
+  margin: 0% 0% 2% 65%;
 }
 
-/* Metrics Row: 4-column grid */
+
+/* Metric Row: Force 4 columns in 1 row */
 .metrics-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -39,7 +19,57 @@
   margin-bottom: 24px;
 }
 
-/* Main Grid: 2 columns with specific 2:1 ratio */
+.metric-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+/* The Sculpted Left Shape */
+.metric-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%; /* Centered vertically */
+  height: 60%;
+  width: 5px;
+  background: var(--accent);
+  border-radius: 0 10px 10px 0; /* Creates the "pill" bite */
+  box-shadow: 2px 0 15px var(--accent);
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  background: #18181b;
+}
+
+/* Inner Layout */
+.card-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.card-title { color: var(--text-dim); font-size: 0.8rem; margin: 0; text-transform: uppercase; }
+.card-value { color: #fff; font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
+.card-trend { font-size: 0.75rem; font-weight: 600; }
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+/* MAIN GRID: Graph Left (2fr), Pie Right (1fr) */
 .dashboard-grid-main {
   display: grid;
   grid-template-columns: 2fr 1fr; 
@@ -47,24 +77,9 @@
   margin-bottom: 24px;
 }
 
-/* Secondary Grid: Bottom Lists 1:1 ratio */
-.dashboard-grid-secondary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.chart-section, .list-section {
+.chart-section {
   background: var(--card-bg);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 24px;
 }
-
-.section-header h3 {
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-
-
