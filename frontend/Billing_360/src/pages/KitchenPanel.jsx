@@ -21,6 +21,7 @@ const KitchenPanel = () => {
         throw new Error('Failed to fetch orders');
       }
     } catch (err) {
+      console.error('Error fetching orders:', err);
       setError('Connection error. Retrying...');
     } finally {
       setLoading(false);
@@ -47,6 +48,7 @@ const KitchenPanel = () => {
         alert(`Failed to update status.`);
       }
     } catch (err) {
+      console.error("An error occurred while updating the order status:", err);
       alert("Network error. Could not update status.");
     }
   };
@@ -92,7 +94,7 @@ const KitchenPanel = () => {
               </div>
               <span 
                 className="status-badge" 
-                style={{ backgroundColor: getStatusColor(order.status) }}
+                style={{ backgroundColor: getStatusColor(order.status),color: 'white' }}
               >
                 {order.status}
               </span>
