@@ -4,7 +4,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-
+from app.api.routes import attendance
+from app.api.routes.attendance import router as attendance_router
+# ----------------------------------
 # --------------------------------------------------
 # Load configuration safely
 # --------------------------------------------------
@@ -122,6 +124,7 @@ app.include_router(order_routes.router, prefix="/api", tags=["Orders"])
 app.include_router(table_routes.router, prefix="/api", tags=["Tables"])
 app.include_router(admin_routes.router, prefix="/api", tags=["Admin"])
 app.include_router(billing_routes.router, prefix="/api", tags=["Billing"])
+app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendance"])
 
 # --------------------------------------------------
 # Root endpoint
