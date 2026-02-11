@@ -1,0 +1,120 @@
+.sidebar {
+  width: 260px;
+  background-color: #000000; /* Solid black like the image */
+  height: 100vh;
+  border-right: 1px solid #1a1a1a;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.collapsed { width: 80px; }
+
+.logo {
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #00c853; /* HotelPro Green */
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.logo-icon {
+  background: #00c853;
+  color: black;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.nav-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  color: #888; /* Dim text */
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.2s;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* ACTIVE STATE - Matching Screenshot */
+.nav-item.active {
+  background: rgba(0, 200, 83, 0.1);
+  color: #00c853; /* Neon Green */
+}
+
+.nav-item.active .nav-icon {
+  color: #00c853;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}
+
+.submenu {
+  margin-left: 45px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
+  border-left: 1px solid #222;
+}
+
+.submenu a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding-left: 15px;
+}
+
+.submenu a.active {
+  color: #00c853;
+}
+
+.arrow {
+  margin-left: auto;
+  font-size: 0.8rem;
+  transition: 0.3s;
+}
+
+.arrow.open { transform: rotate(180deg); }
+
+/* sidebar.css */
+.nav-item {
+  color: var(--text-dim);
+  transition: 0.3s ease;
+}
+
+.nav-item:hover {
+  color: white;
+}
+
+/* The exact green glow from your image */
+.nav-item.active {
+  color: var(--accent-green);
+  background: rgba(0, 200, 83, 0.08);
+  border-right: 3px solid var(--accent-green);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}

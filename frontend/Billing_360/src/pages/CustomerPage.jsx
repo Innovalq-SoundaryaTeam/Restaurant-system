@@ -94,14 +94,16 @@ const CustomerPage = () => {
 
           {/* Table Number */}
           <div className="form-group">
-            <label>Table Number *</label>
+            <label style={{color:"white"}}>Table Number *</label>
             <input
               type="text"
               value={tableNumber}
               onChange={handleTableChange}
               placeholder="Enter table number"
               className={errors.tableNumber ? 'error' : ''}
+              style={{color:'white'}}
               readOnly={isTableFromUrl}
+              
             />
             {errors.tableNumber && (
               <span className="error-message">{errors.tableNumber}</span>
@@ -113,7 +115,7 @@ const CustomerPage = () => {
 
           {/* Name */}
           <div className="form-group">
-            <label>Full Name *</label>
+            <label style={{color:"white"}}>Full Name *</label>
             <input
               type="text"
               name="name"
@@ -121,6 +123,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter your name"
               className={errors.name ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.name && (
               <span className="error-message">{errors.name}</span>
@@ -129,7 +132,7 @@ const CustomerPage = () => {
 
           {/* Phone */}
           <div className="form-group">
-            <label>Phone Number *</label>
+            <label style={{color:"white"}}>Phone Number *</label>
             <input
               type="tel"
               name="phone_number"
@@ -137,6 +140,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter phone number"
               className={errors.phone_number ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.phone_number && (
               <span className="error-message">{errors.phone_number}</span>
@@ -145,7 +149,7 @@ const CustomerPage = () => {
 
           {/* Email */}
           <div className="form-group">
-            <label>Email</label>
+            <label >Email</label>
             <input
               type="email"
               name="email"
@@ -153,6 +157,7 @@ const CustomerPage = () => {
               onChange={handleInputChange}
               placeholder="Enter email (optional)"
               className={errors.email ? 'error' : ''}
+              style={{color:'white'}}
             />
             {errors.email && (
               <span className="error-message">{errors.email}</span>

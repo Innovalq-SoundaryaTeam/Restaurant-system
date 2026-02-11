@@ -1,0 +1,67 @@
+/* src/styles/QrCode.css */
+
+/* --- Variables (Matching ScanQRPage) --- */
+:root {
+  --qr-primary: #2ecc71;       /* Emerald Green */
+  --qr-primary-dark: #27ae60;
+  --qr-glow: rgba(46, 204, 113, 0.4);
+}
+
+.qr-code-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* Space between QR and Button */
+  padding: 10px;
+  width: 100%;
+}
+
+/* --- QR Wrapper --- */
+/* Must be white for scanner readability */
+.qr-code-wrapper {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Deep shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* Flexbox to center the canvas perfectly */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-code-wrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px var(--qr-glow); /* Green Glow on hover */
+}
+
+/* --- Download Button --- */
+.btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 10px 24px;
+  border-radius: 50px; /* Pill shape */
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--qr-primary);
+  color: #000000; /* Black text on Green */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--qr-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px var(--qr-glow);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}

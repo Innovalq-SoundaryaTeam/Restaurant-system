@@ -1,162 +1,113 @@
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 
 
-export default function Usermenu() {
-  const [menuItems, setMenuItems] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+// export default function Usermenu() {
+//   const [menuItems, setMenuItems] = useState([]);
+//   const [cartItems, setCartItems] = useState([]);
+//   const [loading, setLoading] = useState(true);
 
-  // --- 1. FETCH DATA FROM FASTAPI --- 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/menu");
-        if (response.ok) {
-          const data = await response.json();
-          setMenuItems(data);
-        } else {
-          console.error("Failed to fetch menu");
-        }
-      } catch (error) {
-        console.error("Error connecting to backend:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+//   // Fetch from FastAPI
+//   useEffect(() => {
+//     const fetchMenu = async () => {
+//       try {
+//         const response = await fetch("http://127.0.0.1:8000/menu");
+//         if (response.ok) {
+//           const data = await response.json();
+//           setMenuItems(data);
+//         }
+//       } catch (error) {
+//         console.error("Connection error:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchMenu();
+//   }, []);
 
-    fetchMenu();
-  }, []);
+//   const addToCart = (product) => {
+//     setCartItems((prev) => {
+//       const exists = prev.find((i) => i.id === product.id);
+//       return exists
+//         ? prev.map((i) => (i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i))
+//         : [...prev, { ...product, quantity: 1 }];
+//     });
+//   };
 
-  // --- 2. CART HANDLERS ---
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevItems, { ...product, quantity: 1 }];
-      }
-    });
-  };
+//   const removeFromCart = (id) => {
+//     setCartItems((prev) =>
+//       prev.reduce((acc, item) => {
+//         if (item.id === id) {
+//           if (item.quantity > 1) acc.push({ ...item, quantity: item.quantity - 1 });
+//         } else {
+//           acc.push(item);
+//         }
+//         return acc;
+//       }, [])
+//     );
+//   };
 
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === productId);
-      if (existingItem.quantity === 1) {
-        return prevItems.filter((item) => item.id !== productId);
-      } else {
-        return prevItems.map((item) =>
-          item.id === productId
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        );
-      }
-    });
-  };
+//   const totalPrice = cartItems.reduce((acc, i) => acc + i.price * i.quantity, 0);
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+//   const getImageUrl = (path) => {
+//     if (!path) return "https://placehold.co/400x300/1a1a1a/white?text=Tasty+Food";
+//     return path.startsWith("http") ? path : `http://127.0.0.1:8000/${path}`;
+//   };
 
-  const placeOrder = () => {
-    alert(`Order placed! Total: $${totalPrice.toFixed(2)}`);
-    setCartItems([]);
-  };
+//   if (loading) return <div className="menu-loader">Loading...</div>;
 
+//   return (
+//     <div className="menu-app">
+//       <header className="menu-app__header">
+//         <h1 className="menu-app__title">Our Menu</h1>
+//         <p className="menu-app__subtitle">Freshly prepared, just for you.</p>
+//       </header>
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "https://placehold.co/400x300/1a1a1a/white?text=Tasty+Food"; 
-    if (imagePath.startsWith("http")) return imagePath;
-    return `http://127.0.0.1:8000/${imagePath}`;
-  };
+//       {cartItems.length > 0 && (
+//         <section className="cart-preview">
+//           <div className="cart-preview__header">
+//             <span>Your Order</span>
+//             <span className="cart-preview__total">${totalPrice.toFixed(2)}</span>
+//           </div>
+//           <div className="cart-preview__list">
+//             {cartItems.map((item) => (
+//               <div key={item.id} className="cart-item">
+//                 <div className="cart-item__controls">
+//                   <button className="cart-item__btn" onClick={() => removeFromCart(item.id)}>−</button>
+//                   <span className="cart-item__qty">{item.quantity}x</span>
+//                   <span className="cart-item__name">{item.name}</span>
+//                 </div>
+//                 <span className="cart-item__price">${(item.price * item.quantity).toFixed(2)}</span>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
 
-  if (loading) return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
+//       <main className="menu-grid">
+//         {menuItems.map((item) => (
+//           <article key={item.id} className="item-card">
+//             <div className="item-card__media">
+//               <img src={getImageUrl(item.image)} alt={item.name} className="item-card__img" />
+//               <span className="item-card__tag">{item.category || "Special"}</span>
+//             </div>
+//             <div className="item-card__content">
+//               <h2 className="item-card__name">{item.name}</h2>
+//               <p className="item-card__description">{item.description}</p>
+//               <div className="item-card__footer">
+//                 <span className="item-card__price">${item.price}</span>
+//                 <button className="item-card__add-btn" onClick={() => addToCart(item)}>ADD +</button>
+//               </div>
+//             </div>
+//           </article>
+//         ))}
+//       </main>
 
-  return (
-    <div className="menu-container">
-     
-      <div className="static-header-wrapper">
-        <header className="menu-header">
-          <h1>Menu Items</h1>
-          <p>Premium selection, served fast.</p>
-        </header>
+//       {cartItems.length > 0 && (
+//         <button className="checkout-sticky" onClick={() => alert("Order Sent!")}>
+//           Checkout (${totalPrice.toFixed(2)})
+//         </button>
+//       )}
+//     </div>
+//   );
+// }
 
-        {cartItems.length > 0 && (
-          <div className="cart-summary">
-            <div className="cart-header-mini">
-              <span>Your Orders</span>
-              <span className="total-highlight">${totalPrice.toFixed(2)}</span>
-            </div>
-
-            <div className="cart-items-list">
-              {cartItems.map((item) => (
-                <div key={item.id} className="cart-row">
-                  <div className="cart-row-left">
-                    <button 
-                      className="remove-btn" 
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      -
-                    </button>
-                    <span className="cart-qty">{item.quantity}x</span>
-                    <span className="cart-item-name">{item.name}</span>
-                  </div>
-                  <span className="cart-item-price">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      
-      <div className="scrollable-menu-area">
-        <div className="menu-grid">
-          {menuItems.map((item) => (
-            <div key={item.id} className="menu-card">
-              <div className="card-image-container">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="card-image"
-                />
-                <span className="card-category">{item.category || "Special"}</span>
-              </div>
-
-              <div className="card-content">
-                <h2 className="card-title">{item.name}</h2>
-                <p className="card-description">
-                  {item.description || "A delicious choice from our kitchen."}
-                </p>
-
-                <div className="card-footer">
-                  <span className="card-price">${item.price}</span>
-                  <button
-                    className="add-to-cart-btn"
-                    onClick={() => addToCart(item)}
-                  >
-                    ADD +
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      
-      {cartItems.length > 0 && (
-        <button className="place-order-btn" onClick={placeOrder}>
-          Checkout • ${totalPrice.toFixed(2)}
-        </button>
-      )}
-    </div>
-  );
-}

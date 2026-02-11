@@ -33,7 +33,6 @@ const KitchenPanel = () => {
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
-  // FIX: Explicitly send Uppercase status to match MySQL ENUM
   const updateOrderStatus = async (orderId, newStatus) => {
     const uppercaseStatus = newStatus.toUpperCase();
     try {
@@ -45,68 +44,68 @@ const KitchenPanel = () => {
       if (response.ok) {
         fetchOrders(false);
       } else {
-        const errorData = await response.json();
-        console.error("Server rejected status:", errorData);
-        alert(`Failed to update to ${uppercaseStatus}. Check if status exists in DB.`);
+        alert(`Failed to update status.`);
       }
     } catch (err) {
-      alert("Status update failed. Check network.");
+      alert("Network error. Could not update status.");
     }
   };
 
   const getStatusColor = (status) => {
     switch (status?.toUpperCase()) {
-      case 'PENDING': return '#17a2b8';
-      case 'CONFIRMED': return '#007bff';
-      case 'PREPARING': return '#fd7e14';
-      case 'ALMOST_DONE': return '#6f42c1';
-      case 'READY': return '#28a745';
-      case 'SERVED': return '#6c757d';
-      default: return '#343a40';
+      case 'PENDING': return '#f39c12'; // Orange
+      case 'CONFIRMED': return '#3498db'; // Blue
+      case 'PREPARING': return '#9b59b6'; // Purple
+      case 'ALMOST_DONE': return '#e67e22'; // Dark Orange
+      case 'READY': return '#2ecc71'; // Green
+      default: return '#7f8c8d'; // Grey
     }
   };
 
   if (loading && orders.length === 0) {
-    return <div className="loading">Initializing Kitchen Feed...</div>;
+    return <div className="loading-screen">Loading Kitchen Feed...</div>;
   }
 
   return (
     <div className="kitchen-container">
       <header className="kitchen-header">
-        <div className="order-info">
-          <h1>Kitchen Orders</h1>
-          <p>{orders.length} Active Tickets</p>
+        <div>
+          <h1>Kitchen Display System (KDS)</h1>
+          <p className="subtitle">{orders.length} Active Tickets</p>
         </div>
         <button onClick={() => fetchOrders(true)} className="refresh-btn">
-          🔄 Manual Refresh
+          ↻ Refresh
         </button>
       </header>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-banner">{error}</div>}
 
       <div className="orders-grid">
         {orders.map(order => (
           <div key={order.id} className="order-card">
             <div className="order-header">
-              <div className="order-info">
-                <h3>Order #{order.order_number}</h3>
-                <p><strong>Table {order.table_number || 'Takeout'}</strong> • {order.customer_name}</p>
-                <p>{new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-              </div>
-              <div className="order-status">
-                <span 
-                  className="status-badge" 
-                  style={{ backgroundColor: getStatusColor(order.status) }}
-                >
-                  {order.status}
+              <div className="header-left">
+                <span className="order-id">Order status{order.order_number}</span>
+                <span className="order-time">
+                  {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
+              <span 
+                className="status-badge" 
+                style={{ backgroundColor: getStatusColor(order.status) }}
+              >
+                {order.status}
+              </span>
+            </div>
+
+            <div className="table-info">
+              <strong>Table {order.table_number || 'Takeout'}</strong> • {order.customer_name}
             </div>
 
             <div className="order-items">
               {order.items?.map((item, idx) => (
                 <div key={idx} className="order-item">
-                  <span className="item-quantity">{item.quantity}x</span>
+                  <span className="qty-badge">{item.quantity}</span>
                   <span className="item-name">{item.name}</span>
                 </div>
               ))}
@@ -120,9 +119,9 @@ const KitchenPanel = () => {
       </div>
 
       {orders.length === 0 && !loading && (
-        <div className="no-orders">
-          <h3>No Active Orders</h3>
-          <p>Kitchen is currently clear.</p>
+        <div className="empty-state">
+          <h3>All Caught Up!</h3>
+          <p>No active orders in the kitchen.</p>
         </div>
       )}
     </div>
@@ -130,20 +129,19 @@ const KitchenPanel = () => {
 };
 
 const ActionButton = ({ order, onUpdate }) => {
-  // Logic is cleaner using toUpperCase() to match DB exactly
   const status = order.status?.toUpperCase();
 
   switch (status) {
     case 'PENDING':
-      return <button className="action-btn confirm-btn" onClick={() => onUpdate(order.id, 'CONFIRMED')}>CONFIRM ORDER</button>;
+      return <button className="action-btn btn-confirm" onClick={() => onUpdate(order.id, 'CONFIRMED')}>Confirm</button>;
     case 'CONFIRMED':
-      return <button className="action-btn prepare-btn" onClick={() => onUpdate(order.id, 'PREPARING')}>START PREPARING</button>;
+      return <button className="action-btn btn-prepare" onClick={() => onUpdate(order.id, 'PREPARING')}>Start Cooking</button>;
     case 'PREPARING':
-      return <button className="action-btn" style={{backgroundColor: '#6f42c1', color: 'white'}} onClick={() => onUpdate(order.id, 'ALMOST_DONE')}>⏲️ ALMOST DONE</button>;
+      return <button className="action-btn btn-almost" onClick={() => onUpdate(order.id, 'ALMOST_DONE')}>Almost Done</button>;
     case 'ALMOST_DONE':
-      return <button className="action-btn ready-btn" onClick={() => onUpdate(order.id, 'READY')}>MARK AS READY</button>;
+      return <button className="action-btn btn-ready" onClick={() => onUpdate(order.id, 'READY')}>Mark Ready</button>;
     case 'READY':
-      return <button className="action-btn serve-btn" onClick={() => onUpdate(order.id, 'SERVED')}>MARK SERVED</button>;
+      return <button className="action-btn btn-serve" onClick={() => onUpdate(order.id, 'SERVED')}>Served</button>;
     default:
       return null;
   }

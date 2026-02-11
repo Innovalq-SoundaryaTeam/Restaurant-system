@@ -39,6 +39,9 @@ import Attendance from './components/Attendance';
 // 2. Namespace MUI import to prevent overwriting your component
 
 
+// 2. Namespace MUI import to prevent overwriting your component
+
+
 function App() {
   return (
     
@@ -71,9 +74,8 @@ function App() {
             <Route path="/food-items" element={<FoodItems />} />
             
             {/* 3. Render the correct component for the /menu path */}
-            {/* Note: Ensure you pass an 'item' prop to MyMenuItem to avoid the undefined error */}
-            <Route path="/menu" element={<MyMenuItem item={{}} />} /> 
             
+            <Route path="/menu" element={<AdminMenu />} />
             <Route path="/pos" element={<div>POS Page</div>} />
             <Route path="/transaction" element={<div>Transaction Page</div>} />
             <Route path="/booking" element={<div>Booking Page</div>} />
