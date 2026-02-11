@@ -10,10 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.6.0",
+    "@fontsource/cinzel": "^5.2.8",
+    "@fontsource/poppins": "^5.2.7",
+    "axios": "^1.13.5",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "html5-qrcode": "^2.3.8",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
