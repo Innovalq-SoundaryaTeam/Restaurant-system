@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaHome, FaUtensils, FaChevronDown, FaBox, FaUsers, FaCalendarAlt, FaCog } from "react-icons/fa";
-import "../styles/sidebar.css"; // Ensure this path is correct
+// Corrected: split the imports for Font Awesome and Bootstrap Icons
+import { FaHome, FaChevronDown, FaBox, FaUsers, FaCalendarAlt, FaCog, FaUtensils } from "react-icons/fa";
+import { BsFillMenuButtonWideFill } from "react-icons/bs"; 
+import "../styles/sidebar.css"; 
 import Applogo from "../assets/Applogo.jpeg";
 
 export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
@@ -9,9 +11,11 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
 
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
-      {/* LOGO - Matching HotelPro Style */}
+      {/* LOGO */}
       <div className="logo">
-        <div className="logo-icon" ><img src={Applogo} alt="Logo" style={{width:"35px", height:"35px",borderRadius:"5px"}}/></div>
+        <div className="logo-icon">
+          <img src={Applogo} alt="Logo" style={{ width: "35px", height: "35px", borderRadius: "5px" }} />
+        </div>
         {!collapsed && <span className="logo-text">Billing 360</span>}
       </div>
 
@@ -25,7 +29,8 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
         {/* MENU with Submenu Logic */}
         <div className={`menu-block ${menuOpen ? "open" : ""}`}>
           <div className="submenu-title nav-item" onClick={() => setMenuOpen(!menuOpen)}>
-            <FaUtensils className="nav-icon" />
+            {/* Now correctly imported from 'react-icons/bs' */}
+            <BsFillMenuButtonWideFill className="nav-icon" />
             {!collapsed && <span>Menu Management</span>}
             {!collapsed && <FaChevronDown className={`arrow ${menuOpen ? "open" : ""}`} />}
           </div>
@@ -38,7 +43,7 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
           )}
         </div>
 
-        {/* OTHER ITEMS (To match your screenshot) */}
+        {/* OTHER ITEMS */}
         <NavLink to="/orders" className="nav-item" onClick={closeMobile}>
           <FaBox className="nav-icon" />
           {!collapsed && <span>Orders</span>}
@@ -60,7 +65,7 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
         </NavLink>
 
         <NavLink to="/kitchen" className="nav-item" onClick={closeMobile}>
-          <FaCog className="nav-icon" />
+          <FaUtensils className="nav-icon" />
           {!collapsed && <span>Kitchen</span>}
         </NavLink>
       </nav>

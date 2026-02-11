@@ -13,34 +13,36 @@ export default function Dashboard() {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <h1>Dashboard Overview</h1>
-        <div className="header-search">
-          <input type="text" placeholder="Search data..." />
+        <div >
+          <input type="text" placeholder="Search data..." className="header-search" />
         </div>
       </header>
 
       {/* Metric Cards with HotelPro Accent Borders */}
       <div className="metrics-row">
-        <Metricard title="Today's Orders" value="0" color="#00c853" trend="+12% from yesterday" iconType="order" />
+        <Metricard title="Today's Orders" value="0" color="#00a3c8" trend="+12% from yesterday" iconType="order" />
         <Metricard title="Today's Revenue" value="$0.00" color="#00c853" trend="+8% from yesterday" iconType="revenue" />
         <Metricard title="Low Stock Items" value="1" color="#ffab40" trend="Need reorder" iconType="stock" />
-        <Metricard title="Staff Present" value="0/0" color="#00c853" trend="0/0 tables occupied" iconType="staff" />
+        <Metricard title="Staff Present" value="0/0" color="#accc0b" trend="0/0 tables occupied" iconType="staff" />
       </div>
 
       <div className="dashboard-grid-main">
-        <div className="chart-section main-revenue">
-          <div className="section-header">
-            <h3>Weekly Revenue</h3>
-          </div>
-          <EarningsChart range={range} setRange={setRange} />
-        </div>
+  {/* Graph on the Left */}
+  <div className="chart-section main-revenue">
+    <div className="section-header">
+      <h3>Weekly Revenue</h3>
+    </div>
+    <EarningsChart range={range} setRange={setRange} />
+  </div>
 
-        <div className="chart-section order-types">
-          <div className="section-header">
-            <h3>Order Types</h3>
-          </div>
-          <OrdersPie />
-        </div>
-      </div>
+  {/* Pie Chart on the Right */}
+  <div className="chart-section order-types">
+    <div className="section-header">
+      <h3>Order Types</h3>
+    </div>
+    <OrdersPie />
+  </div>
+</div>
 
       <div className="dashboard-grid-secondary">
         <div className="list-section">
