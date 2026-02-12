@@ -31,6 +31,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     order_number = Column(String(50), unique=True, nullable=True)
+    session_id = Column(String(50), ForeignKey("order_sessions.session_id"), nullable=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
     table_number = Column(String(20), nullable=True)
     order_type = Column(Enum(OrderType), default=OrderType.DINE_IN)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import websocketService from "../services/websocket";
 import "../styles/OrderPlacedPage.css";
@@ -8,103 +8,143 @@ const OrderPlacedPage = () => {
   const socketConnected = useRef(false);
 
   const [orderDetails, setOrderDetails] = useState(null);
+  const [sessionData, setSessionData] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mealFinished, setMealFinished] = useState(false);
+  const [sessionSummary, setSessionSummary] = useState(null);
 
-  // -------------------- Initialization --------------------
+  // -------------------- Load Last Order --------------------
   useEffect(() => {
     const savedOrder = localStorage.getItem("lastOrder");
 
     if (!savedOrder) {
-      console.error("No order found in local storage");
-      navigate("/menu");
+      navigate("/usermenu");
       return;
     }
 
     try {
       const parsedOrder = JSON.parse(savedOrder);
-      
-      // DEBUG: If your total is missing, check this log in the browser console
-      console.log("Order Data Loaded:", parsedOrder);
+
+      if (!parsedOrder.sessionId) {
+        navigate("/usermenu");
+        return;
+      }
 
       setOrderDetails(parsedOrder);
-      setLoading(false);
+      loadSession(parsedOrder.sessionId);
     } catch (err) {
-      console.error("Error parsing order JSON:", err);
-      navigate("/menu");
+      console.error("Invalid localStorage order");
+      navigate("/usermenu");
     }
   }, [navigate]);
 
+  // -------------------- Load Session --------------------
+  const loadSession = async (sessionId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/sessions/${sessionId}`
+      );
+
+      if (!res.ok) {
+        navigate("/usermenu");
+        return;
+      }
+
+      const data = await res.json();
+
+      setSessionData(data);
+      setOrders(data.orders || []);
+      setLoading(false);
+    } catch (err) {
+      console.error("Session load error:", err);
+      navigate("/usermenu");
+    }
+  };
+
   // -------------------- WebSocket Logic --------------------
   useEffect(() => {
-    // Only connect if we have an order ID and haven't connected yet
     if (orderDetails?.orderId && !socketConnected.current) {
-      websocketService.connect();
-      socketConnected.current = true;
+      try {
+        websocketService.connect();
+        socketConnected.current = true;
 
-      const handleStatusUpdate = ({ order_id, status }) => {
-        if (order_id === orderDetails.orderId) {
-          setOrderDetails((prev) => {
-            const updated = { ...prev, status };
-            // Keep localStorage in sync so refresh doesn't lose the status
-            localStorage.setItem("lastOrder", JSON.stringify(updated));
-            return updated;
-          });
-        }
-      };
+        const handleStatusUpdate = ({ order_id, status }) => {
+          // Update order details if it's the current order
+          if (order_id === orderDetails.orderId) {
+            setOrderDetails((prev) => {
+              const updated = { ...prev, status };
+              localStorage.setItem("lastOrder", JSON.stringify(updated));
+              return updated;
+            });
+          }
+          
+          // Refresh session to update order list
+          if (orderDetails.sessionId) {
+            loadSession(orderDetails.sessionId);
+          }
+        };
 
-      websocketService.on("orderStatusUpdate", handleStatusUpdate);
+        websocketService.on("orderStatusUpdate", handleStatusUpdate);
 
-      return () => {
-        websocketService.off("orderStatusUpdate", handleStatusUpdate);
-        websocketService.disconnect();
-        socketConnected.current = false;
-      };
+        return () => {
+          websocketService.off("orderStatusUpdate", handleStatusUpdate);
+          websocketService.disconnect();
+          socketConnected.current = false;
+        };
+      } catch (error) {
+        console.error("WebSocket connection failed:", error);
+        // Don't crash if WebSocket fails
+      }
     }
-  }, [orderDetails?.orderId]);
+  }, [orderDetails?.orderId, orderDetails?.sessionId]);
 
-  // -------------------- Helpers --------------------
-  
-  // Safely parse the amount even if it's a string or has a different key
-  const renderAmount = () => {
-    const amount = orderDetails?.totalAmount ?? orderDetails?.total_amount ?? 0;
-    return Number(amount).toLocaleString('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 2
+  // -------------------- Track Order --------------------
+  const handleTrackOrder = (orderId) => {
+    if (!orderId || isNaN(orderId)) return;
+    navigate(`/track-order/${orderId}`);
+  };
+
+  // -------------------- New Order --------------------
+  const handleNewOrder = () => {
+    localStorage.removeItem("cart");
+
+    navigate("/usermenu", {
+      state: {
+        sessionId: sessionData?.session_id,
+        tableNumber: sessionData?.table_number,
+      },
     });
   };
 
-  const handleDownloadBill = useCallback(() => {
-    if (!orderDetails?.billUrl) return;
+  // -------------------- Finish Meal --------------------
+  const handleFinishMeal = async () => {
+    if (!orderDetails?.sessionId) return;
     
-    // Use an environment variable for the base URL in production
-    const API_BASE = "http://localhost:8000"; 
-    const link = document.createElement("a");
-    link.href = `${API_BASE}${orderDetails.billUrl}`;
-    link.download = orderDetails.billFilename || `Bill-${orderDetails.orderNumber}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, [orderDetails]);
-
-  // const handleTrackOrder = () => {
-  //   if (orderDetails?.orderId) {
-  //     navigate(`/kitchen?order_id=${orderDetails.orderId}`);
-  //   }
-  // };
-
-  const handleNewOrder = () => {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("lastOrder");
-    navigate("/usermenu");
+    try {
+      const response = await fetch(`http://localhost:8000/api/sessions/${orderDetails.sessionId}/finish`, {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        setMealFinished(true);
+        setSessionSummary(result);
+      } else {
+        console.error("Error finishing meal");
+      }
+    } catch (error) {
+      console.error("Error finishing meal:", error);
+    }
   };
 
-  const handleFinishMeal = () => {
-    setOrderDetails((prev) => ({ ...prev, mealFinished: true }));
+  // -------------------- Download Bill --------------------
+  const handleDownloadBill = () => {
+    if (!orderDetails?.sessionId) return;
+    window.open(`http://localhost:8000/api/sessions/${orderDetails.sessionId}/invoice/download`);
   };
 
-  // -------------------- UI --------------------
-  if (loading || !orderDetails) {
+  if (loading) {
     return (
       <div className="order-placed-container">
         <div className="loading-spinner">Loading order details...</div>
@@ -118,65 +158,105 @@ const OrderPlacedPage = () => {
         <div className="success-icon">✓</div>
 
         <h1>
-          {orderDetails.mealFinished
+          {mealFinished
             ? "Thank You for Your Visit!"
             : "Order Placed Successfully!"}
         </h1>
 
-        <div className="order-summary">
-          <div className="summary-item">
-            <span>Order Number:</span>
-            <span className="order-number">{orderDetails.orderNumber || "N/A"}</span>
+        {sessionData && (
+          <div className="session-info" style={{backgroundColor: "#f0f8ff", padding: "10px", borderRadius: "8px", marginBottom: "15px"}}>
+            <h3>Session: Table {sessionData.table_number}</h3>
+            
+            {orders.length > 0 && (
+              <div className="orders-container">
+                {orders.map(order => (
+                  <div key={order.id} className="order-card" style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px", margin: "5px 0", backgroundColor: "#fff", borderRadius: "5px"}}>
+                    <div>
+                      <h4>{order.order_number}</h4>
+                      <p>Status: {order.status}</p>
+                      <p>Total: ₹{Number(order.total_price).toFixed(2)}</p>
+                    </div>
+                    <button 
+                      onClick={() => handleTrackOrder(order.id)}
+                      className="track-btn"
+                      style={{padding: "5px 10px", fontSize: "12px", marginLeft: "10px"}}
+                    >
+                      Track Order
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
-          <div className="summary-item"
-          >
-            <span>Table:</span>
-            <span 
-            style={{color:"black",fontWeight:"bold",fontSize:"medium"}}
-            >{orderDetails.tableNumber || "N/A"}</span>
-          </div>
-
-          <div className="summary-item">
-            <span>Total Amount:</span>
-            <span className="total-amount highlight">{renderAmount()}</span>
-          </div>
-
-          {orderDetails.status && (
+        {!mealFinished && orderDetails && (
+          <div className="order-summary">
             <div className="summary-item">
-              <span>Status:</span>
-              <span className={`status-badge ${orderDetails.status.toLowerCase()}`}>
-                {orderDetails.status}
-              </span>
+              <span>Order Number:</span>
+              <span className="order-number">{orderDetails.orderNumber || "N/A"}</span>
             </div>
-          )}
-        </div>
+
+            <div className="summary-item">
+              <span>Table:</span>
+              <span 
+              style={{color:"black",fontWeight:"bold",fontSize:"medium"}}
+              >{orderDetails.tableNumber || "N/A"}</span>
+            </div>
+
+            <div className="summary-item">
+              <span>Total Amount:</span>
+              <span className="total-amount highlight">₹{Number(orderDetails.totalAmount || 0).toFixed(2)}</span>
+            </div>
+
+            {orderDetails.status && (
+              <div className="summary-item">
+                <span>Status:</span>
+                <span className={`status-badge ${orderDetails.status.toLowerCase()}`}>
+                  {orderDetails.status}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {mealFinished && sessionSummary && (
+          <div className="session-summary" style={{backgroundColor: "#f0fff0", padding: "15px", borderRadius: "8px", marginBottom: "15px"}}>
+            <h3>Session Summary</h3>
+            <p><strong>Total Orders:</strong> {sessionSummary.total_orders}</p>
+            <p><strong>Subtotal:</strong> ₹{Number(sessionSummary.subtotal).toFixed(2)}</p>
+            <p><strong>Tax (18%):</strong> ₹{Number(sessionSummary.tax).toFixed(2)}</p>
+            <p><strong>Grand Total:</strong> ₹{Number(sessionSummary.grand_total).toFixed(2)}</p>
+          </div>
+        )}
 
         <div className="success-message">
           <p>📧 Your bill has been sent to <strong>{orderDetails.customerEmail || 'your email'}</strong></p>
-          {!orderDetails.mealFinished && <p>🍽️ Your order is being prepared in the kitchen.</p>}
+          {!mealFinished && <p>🍽️ Your order is being prepared in the kitchen.</p>}
         </div>
 
         <div className="action-buttons">
-          {orderDetails.billUrl && (
+          {mealFinished && orderDetails.sessionId && (
             <button onClick={handleDownloadBill} className="download-btn">
               📄 Download Bill
             </button>
           )}
 
-          <button 
-          // onClick={handleTrackOrder} 
-          className="track-btn">
-            📍 Track Order
-          </button>
+          {!mealFinished && orderDetails.orderId && (
+            <button 
+              onClick={() => handleTrackOrder(orderDetails.orderId)} 
+              className="track-btn">
+              📍 Track Order
+            </button>
+          )}
 
           <button 
-          onClick={handleNewOrder} 
-          className="new-order-btn">
+            onClick={handleNewOrder} 
+            className="new-order-btn">
             🍴 New Order
           </button>
 
-          {!orderDetails.mealFinished && (
+          {!mealFinished && orderDetails.sessionId && (
             <button onClick={handleFinishMeal} className="finish-meal-btn">
               ✅ Finish Meal
             </button>

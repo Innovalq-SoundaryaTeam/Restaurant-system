@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/MenuPage.css";
 
 export default function MenuPage() {
@@ -7,19 +7,41 @@ export default function MenuPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [searchParams] = useSearchParams();
   const restaurantId = searchParams.get("restaurant_id") || "REST001";
   const tableFromUrl = searchParams.get("table");
 
+  // Get session info from navigation state or localStorage
+  const [sessionId, setSessionId] = useState(null);
+  
   useEffect(() => {
+    // Clear old session data when entering new table
+    if (tableFromUrl) {
+      localStorage.removeItem('sessionId');
+      localStorage.removeItem('lastOrder');
+    }
+    
+    // Check if we have session info from navigation state (from New Order button)
+    if (location.state?.sessionId) {
+      setSessionId(location.state.sessionId);
+      localStorage.setItem('sessionId', location.state.sessionId);
+    } else {
+      // Try to get from localStorage
+      const savedSessionId = localStorage.getItem('sessionId');
+      if (savedSessionId) {
+        setSessionId(savedSessionId);
+      }
+    }
+    
     if (tableFromUrl && !localStorage.getItem('tableNumber')) {
       localStorage.setItem('tableNumber', tableFromUrl);
     }
     if (!localStorage.getItem('restaurantId')) {
       localStorage.setItem('restaurantId', restaurantId);
     }
-  }, [tableFromUrl, restaurantId]);
+  }, [tableFromUrl, restaurantId, location.state]);
 
   const tableNumber = localStorage.getItem('tableNumber') || 'T4';
 

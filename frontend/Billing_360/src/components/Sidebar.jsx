@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { FaHome, FaChevronDown, FaBox, FaUsers, FaCalendarAlt, FaCog, FaUtensils } from "react-icons/fa";
 import { BsFillMenuButtonWideFill } from "react-icons/bs"; 
 import "../styles/sidebar.css"; 
-import Applogo from "../assets/Applogo.jpeg";
+import Applogo from "../assets/logo360.jpeg";
 
 export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
   const [menuOpen, setMenuOpen] = useState(false);

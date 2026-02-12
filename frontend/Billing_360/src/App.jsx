@@ -23,6 +23,7 @@ import CustomerPage from './pages/CustomerPage';
 import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderPlacedPage from './pages/OrderPlacedPage';
+import OrderTrackPage from './pages/OrderTrackPage';
 
 // Admin/Staff Pages
 import KitchenPanel from './pages/KitchenPanel';
@@ -45,6 +46,7 @@ function App() {
           <Route path="/usermenu" element={<MenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-placed" element={<OrderPlacedPage />} />
+          <Route path="/track-order/:orderId" element={<OrderTrackPage />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
@@ -57,6 +59,7 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/attendance" element={<Attendance />} />
             <Route path="/food-items" element={<FoodItems />} />
             <Route path="/menu" element={<AdminMenu />} />
             <Route path="/pos" element={<div>POS Page</div>} />
