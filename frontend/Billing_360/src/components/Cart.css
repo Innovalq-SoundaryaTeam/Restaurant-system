@@ -1,0 +1,67 @@
+/* Update these sections in your CSS */
+
+.cart-sidebar {
+  background: #121212; /* Dark background */
+  width: 400px;
+  color: #fff;
+  border-left: 1px solid #1f1f1f;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.cart-header {
+  background: #111; /* Slightly different dark shade */
+  border-bottom: 1px solid #1f1f1f;
+  color: #fff;
+}
+
+.cart-header h2 {
+  color: #fff;
+}
+
+.close-btn {
+  color: #888;
+}
+
+.close-btn:hover {
+  background: #222;
+  color: #00c853;
+}
+
+.quantity-controls {
+  background: #1a1a1a; /* Darker control area */
+  border: 1px solid #333;
+}
+
+.quantity-btn {
+  background: #222;
+  color: #fff;
+}
+
+.quantity-btn:hover {
+  background: #00c853;
+  color: #000;
+}
+
+.cart-footer {
+  background: #111;
+  border-top: 1px solid #1f1f1f;
+}
+
+.summary-row.total {
+  color: #00c853; /* Total in green */
+  border-top: 1px solid #333;
+}
+
+.checkout-btn {
+  background: #00c853; /* Solid green for primary action */
+  color: #000;
+  transition: 0.3s;
+}
+
+.checkout-btn:hover {
+  background: #00e676;
+  box-shadow: 0 0 20px rgba(0, 200, 83, 0.4);
+  transform: translateY(-2px);
+}

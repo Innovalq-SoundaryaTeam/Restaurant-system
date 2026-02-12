@@ -1,0 +1,70 @@
+/* dashboard.css */
+:root {
+  --bg-dark: #09090b;       /* Midnight background */
+  --card-bg: #121214;       /* Slightly lighter card surfaces */
+  --accent-green: #00c853;  /* HotelPro Green */
+  --border-subtle: #1f1f23; /* Subtle card borders */
+  --text-dim: #a1a1aa;      /* Dimmed labels */
+}
+
+.dashboard-container {
+  background-color: var(--bg-dark);
+  color: white;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* Header style with search at top right */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.header-search input {
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  width: 250px;
+}
+
+/* Metrics Row: 4-column grid */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Main Grid: 2 columns with specific 2:1 ratio */
+.dashboard-grid-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr; 
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Secondary Grid: Bottom Lists 1:1 ratio */
+.dashboard-grid-secondary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-section, .list-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.section-header h3 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+
