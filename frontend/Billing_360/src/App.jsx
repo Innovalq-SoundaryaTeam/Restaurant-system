@@ -26,6 +26,7 @@ import OrderTrackPage from './pages/OrderTrackPage';
 import KitchenPanel from './pages/KitchenPanel';
 import AdminLogin from './pages/AdminLogin';
 import AdminMenu from './pages/AdminMenu';
+import Attendance from './components/Attendance';
 
 // 2. Namespace MUI import to prevent overwriting your component
 
@@ -58,6 +59,7 @@ function App() {
           {/* Protected Admin Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/attendance" element={<Attendance />} />
             <Route path="/food-items" element={<FoodItems />} />
             
             {/* 3. Render the correct component for the /menu path */}
