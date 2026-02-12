@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/CheckoutPage.css";
+import "../styles/OrderPlacedpage.css";
+
 
 const CheckoutPage = () => {
   const [cart, setCart] = useState([]);
@@ -14,6 +16,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   const tableNumber = localStorage.getItem('tableNumber') || 'Not specified';
+  const sessionId = localStorage.getItem('sessionId') || null;
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -57,7 +60,8 @@ const CheckoutPage = () => {
           quantity: item.quantity,
           special_instructions: ""
         })),
-        payment_method: paymentMethod 
+        payment_method: paymentMethod,
+        session_id: sessionId  // Add session_id if exists
       };
 
       const response = await fetch("http://127.0.0.1:8000/api/orders", {
@@ -77,6 +81,7 @@ const CheckoutPage = () => {
       const orderDataForStorage = {
         orderId: result.id,
         orderNumber: result.order_number,
+        sessionId: result.session_id,  // Add session_id
         totalAmount: result.total_price, // Changed from 'total' to 'totalAmount'
         status: result.status || "Pending",
         tableNumber: tableNumber,        // Added for persistence
@@ -101,9 +106,14 @@ const CheckoutPage = () => {
 
   const handleBackToMenu = () => navigate('/usermenu');
 
-  const handleTrackOrder = () => {
-    navigate(`/order-placed`);
-  };
+ const handleTrackOrder = () => {
+  const savedOrder = JSON.parse(localStorage.getItem("lastOrder"));
+  if (savedOrder?.orderId) {
+    navigate(`/track-order/${savedOrder.orderId}`);
+  }
+};
+
+
 
   // Success UI
   if (orderPlaced && orderDetails) {

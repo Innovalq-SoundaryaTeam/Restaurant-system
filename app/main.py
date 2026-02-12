@@ -1,9 +1,10 @@
 import sys
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
+from app.api.routes import kitchen as kitchen_routes
 
 # --------------------------------------------------
 # Load configuration safely
@@ -42,6 +43,9 @@ from app.api.routes import tables as table_routes
 from app.api.routes import admin as admin_routes
 from app.api.routes import billing as billing_routes
 
+# ✅ Import websocket_manager ONLY (not websocket_endpoint)
+from app.services.websocket_service import websocket_manager
+
 # --------------------------------------------------
 # Create tables
 # --------------------------------------------------
@@ -60,7 +64,7 @@ def create_tables():
         return False
 
 # --------------------------------------------------
-# App lifespan (startup / shutdown)
+# App lifespan
 # --------------------------------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -115,13 +119,28 @@ app.add_middleware(
 )
 
 # --------------------------------------------------
-# API Routers (ALL under /api)
+# API Routers
 # --------------------------------------------------
 app.include_router(menu_routes.router, prefix="/api", tags=["Menu"])
 app.include_router(order_routes.router, prefix="/api", tags=["Orders"])
 app.include_router(table_routes.router, prefix="/api", tags=["Tables"])
 app.include_router(admin_routes.router, prefix="/api", tags=["Admin"])
 app.include_router(billing_routes.router, prefix="/api", tags=["Billing"])
+app.include_router(kitchen_routes.router, prefix="/api", tags=["Kitchen"])
+
+
+# --------------------------------------------------
+# ✅ WebSocket route (Correct Version)
+# --------------------------------------------------
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket_manager.connect(websocket)
+    try:
+        while True:
+            # Keep connection alive
+            await websocket.receive_text()
+    except:
+        websocket_manager.disconnect(websocket)
 
 # --------------------------------------------------
 # Root endpoint
