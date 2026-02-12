@@ -2,10 +2,12 @@ import enum
 
 class OrderStatus(str, enum.Enum):
     PENDING = "PENDING"
-    CONFIRMED = "CONFIRMED" 
-    PREPARING = "PREPARING"
-    ALMOST_DONE = "ALMOST_DONE"
+    CONFIRMED = "CONFIRMED"
+    # Add PREPARING here
+    PREPARING = "PREPARING" 
+    KITCHEN = "KITCHEN"
     READY = "READY"
+    COMPLETED = "COMPLETED"
     SERVED = "SERVED"
     CANCELLED = "CANCELLED"
-    PAID = "PAID"
+    ARCHIVED = "ARCHIVED"

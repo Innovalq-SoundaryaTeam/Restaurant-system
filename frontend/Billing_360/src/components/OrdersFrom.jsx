@@ -1,32 +1,43 @@
+import React from "react";
+import "../styles/OrdersFrom.css";
+
 export default function OrdersFrom() {
   const data = [
-    { label: "Dine-in", value: 60, color: "#4f46e5" },
-    { label: "Takeaway", value: 25, color: "#22c55e" },
-    { label: "Online", value: 15, color: "#f59e0b" },
+    { label: "Dine-in", value: 60, color: "#007bff" }, // Billing 360 Blue
+    { label: "Takeaway", value: 25, color: "#00c853" }, // Billing 360 Green
+    { label: "Online", value: 15, color: "#ffab40" },   // Warning Orange
   ];
 
   return (
-    <div className="card">
-      <h3>Orders From</h3>
+    <div className="orders-from-card">
+      <header className="orders-from-header">
+        <h3 className="gopron-font blue-text">Orders Sources</h3>
+      </header>
 
-      {data.map((item, i) => (
-        <div key={i} className="progress-row">
-          <div className="progress-header">
-            <span>{item.label}</span>
-            <span>{item.value}%</span>
-          </div>
+      <div className="progress-container">
+        {data.map((item, i) => (
+          <div key={i} className="progress-row">
+            <div className="progress-info">
+              <span className="source-label">{item.label}</span>
+              {/* Fixed width for percentage ensures vertical alignment */}
+              <span className="source-value gopron-font" style={{ color: item.color }}>
+                {item.value}%
+              </span>
+            </div>
 
-          <div className="progress-bar">
-            <div
-              className="progress-fill"
-              style={{
-                width: `${item.value}%`,
-                background: item.color,
-              }}
-            />
+            <div className="progress-track">
+              <div
+                className="progress-fill-neon"
+                style={{
+                  width: `${item.value}%`,
+                  backgroundColor: item.color,
+                  boxShadow: `0 0 10px ${item.color}44` // Subtle glow
+                }}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

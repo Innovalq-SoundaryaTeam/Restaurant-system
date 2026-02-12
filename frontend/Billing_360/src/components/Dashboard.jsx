@@ -20,11 +20,12 @@ export default function Dashboard() {
 
       {/* Metric Cards with HotelPro Accent Borders */}
       <div className="metrics-row">
-        <Metricard title="Today's Orders" value="0" color="#00c853" trend="+12% from yesterday" iconType="order" />
-        <Metricard title="Today's Revenue" value="$0.00" color="#00c853" trend="+8% from yesterday" iconType="revenue" />
-        <Metricard title="Low Stock Items" value="1" color="#ffab40" trend="Need reorder" iconType="stock" />
-        <Metricard title="Staff Present" value="0/0" color="#00c853" trend="0/0 tables occupied" iconType="staff" />
-      </div>
+  <Metricard title="Orders" value="120" color="#007bff" trend="+12%" iconType="order" />
+  <Metricard title="Revenue" value="45k" color="#00c853" trend="+8%" iconType="revenue" />
+  <Metricard title="Expenses" value="12k" color="#ff4444" trend="+5%" iconType="expenses" />
+  <Metricard title="Stock" value="Low" color="#ffab40" trend="Check" iconType="stock" />
+  <Metricard title="Staff" value="20" color="#0ff50b" trend="+3%" iconType="staff" />
+</div>
 
       <div className="dashboard-grid-main">
         <div className="chart-section main-revenue">

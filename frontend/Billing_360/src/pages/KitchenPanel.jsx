@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FaSync, FaClock, FaTrashAlt } from 'react-icons/fa';
 import '../styles/KitchenPanel.css';
 
 const KitchenPanel = () => {
@@ -6,219 +7,118 @@ const KitchenPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE = "http://127.0.0.1:8000/api/kitchen";
+  const API_URL = "http://127.0.0.1:8000/api/kitchen/orders";
   const REST_ID = "REST001";
 
-  // -------------------------------------------------------
-  // ✅ FETCH ORDERS
-  // -------------------------------------------------------
   const fetchOrders = useCallback(async (isInitial = false) => {
     try {
       if (isInitial) setLoading(true);
-
-      const response = await fetch(
-        `${API_BASE}/orders`
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Server Error: ${text}`);
+      const response = await fetch(`${API_URL}?restaurant_id=${REST_ID}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data);
+        setError(null);
+      } else {
+        throw new Error('Failed to fetch orders');
       }
-
-      const data = await response.json();
-      setOrders(data || []);
-      setError(null);
-
     } catch (err) {
-      console.error("Fetch Orders Error:", err);
-      setError("Connection error. Retrying...");
+      setError('Connection error. Retrying...');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // -------------------------------------------------------
-  // ✅ AUTO REFRESH EVERY 10s
-  // -------------------------------------------------------
   useEffect(() => {
     fetchOrders(true);
-    const interval = setInterval(() => fetchOrders(false), 10000);
+    const interval = setInterval(() => fetchOrders(false), 5000); // 5s for faster sync
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
-  // -------------------------------------------------------
-  // ✅ UPDATE ORDER STATUS
-  // -------------------------------------------------------
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(
-        `${API_BASE}/orders/${orderId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: newStatus.toUpperCase() }),
-        }
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text);
-      }
-
-      // Refresh orders after update
-      fetchOrders(false);
-
+      const response = await fetch(`http://127.0.0.1:8000/api/kitchen/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus.toUpperCase() }),
+      });
+      if (response.ok) fetchOrders(false);
     } catch (err) {
-      console.error("Update Error:", err);
-      alert("Failed to update order status.");
+      alert("Network error. Could not update status.");
     }
   };
 
-  // -------------------------------------------------------
-  // ✅ STATUS COLORS
-  // -------------------------------------------------------
-  const getStatusColor = (status) => {
-    switch (status?.toUpperCase()) {
-      case "PENDING": return "#f39c12";
-      case "CONFIRMED": return "#3498db";
-      case "PREPARING": return "#9b59b6";
-      case "ALMOST_DONE": return "#e67e22";
-      case "READY": return "#2ecc71";
-      case "SERVED": return "#27ae60";
-      default: return "#7f8c8d";
-    }
-  };
-
-  // -------------------------------------------------------
-  // ✅ LOADING SCREEN
-  // -------------------------------------------------------
   if (loading && orders.length === 0) {
-    return <div className="loading-screen">Loading Kitchen Feed...</div>;
+    return <div className="kds-loader"><h2 className="gopron-font">INITIALIZING KDS...</h2></div>;
   }
 
   return (
-    <div className="kitchen-container">
-      <header className="kitchen-header">
-        <div>
-          <h1>Kitchen Display System (KDS)</h1>
-          <p className="subtitle">{orders.length} Active Tickets</p>
+    <div className="kds-container">
+      <header className="kds-header">
+        <div className="kds-title-section">
+          <h1 className="gopron-font">Kitchen Terminal</h1>
+          <div className="kds-stats">
+            <span className="stat-pill blue-glow">{orders.length} ACTIVE TICKETS</span>
+          </div>
         </div>
-        <button
-          onClick={() => fetchOrders(true)}
-          className="refresh-btn"
-        >
-          ↻ Refresh
+        <button onClick={() => fetchOrders(true)} className="kds-refresh-btn">
+          <FaSync /> REFRESH
         </button>
       </header>
 
-      {error && <div className="error-banner">{error}</div>}
-
-      <div className="orders-grid">
+      <div className="kds-grid">
         {orders.map(order => (
-          <div key={order.id} className="order-card">
-
-            <div className="order-header">
-              <div className="header-left">
-                <span className="order-id">
-                  Order #{order.order_number}
-                </span>
-                <span className="order-time">
-                  {new Date(order.created_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  })}
-                </span>
+          <div key={order.id} className={`kds-card ${order.status.toLowerCase()}`}>
+            <div className="kds-card-header">
+              <div className="order-meta">
+                <span className="order-no gopron-font">ORD-{order.order_number.slice(-4)}</span>
+                <span className="order-time"><FaClock /> {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
-
-              <span
-                className="status-badge"
-                style={{ backgroundColor: getStatusColor(order.status) }}
-              >
-                {order.status}
-              </span>
+              <button onClick={() => updateOrderStatus(order.id, 'CANCELLED')} className="kds-delete-icon">
+                <FaTrashAlt />
+              </button>
             </div>
 
-            <div className="table-info">
-              <strong>
-                Table {order.table_number || "Takeout"}
-              </strong>{" "}
-              • {order.customer_name}
+            <div className="kds-table-bar">
+              <span className="gopron-font">TABLE {order.table_number || 'N/A'}</span>
+              <span className="customer-name">{order.customer_name}</span>
             </div>
 
-            <div className="order-items">
+            <div className="kds-items-list">
               {order.items?.map((item, idx) => (
-                <div key={idx} className="order-item">
-                  <span className="qty-badge">
-                    {item.quantity}
-                  </span>
-                  <span className="item-name">
-                    {item.name}
-                  </span>
+                <div key={idx} className="kds-item-row">
+                  <span className="kds-qty">x{item.quantity}</span>
+                  <span className="kds-item-name">{item.name}</span>
                 </div>
               ))}
             </div>
 
-            <div className="order-actions">
-              <ActionButton
-                order={order}
-                onUpdate={updateOrderStatus}
-              />
+            <div className="kds-actions">
+              <ActionButton order={order} onUpdate={updateOrderStatus} />
             </div>
-
           </div>
         ))}
       </div>
-
-      {orders.length === 0 && !loading && (
-        <div className="empty-state">
-          <h3>All Caught Up!</h3>
-          <p>No active orders in the kitchen.</p>
-        </div>
-      )}
     </div>
   );
 };
 
-// -------------------------------------------------------
-// ✅ ACTION BUTTON COMPONENT
-// -------------------------------------------------------
 const ActionButton = ({ order, onUpdate }) => {
   const status = order.status?.toUpperCase();
+  const btnMap = {
+    'PENDING': { label: 'CONFIRM ORDER', class: 'btn-blue', next: 'KITCHEN' },
+    'KITCHEN': { label: 'MARK AS READY', class: 'btn-orange', next: 'READY' },
+    'READY': { label: 'MARK AS SERVED', class: 'btn-green', next: 'COMPLETED' },
+    'COMPLETED': { label: 'ARCHIVE', class: 'btn-white', next: 'ARCHIVED' }
+  };
 
-  switch (status) {
-    case "PENDING":
-      return <button className="action-btn btn-confirm"
-        onClick={() => onUpdate(order.id, "CONFIRMED")}>
-        Confirm
-      </button>;
+  const current = btnMap[status];
+  if (!current) return null;
 
-    case "CONFIRMED":
-      return <button className="action-btn btn-prepare"
-        onClick={() => onUpdate(order.id, "PREPARING")}>
-        Start Cooking
-      </button>;
-
-    case "PREPARING":
-      return <button className="action-btn btn-almost"
-        onClick={() => onUpdate(order.id, "ALMOST_DONE")}>
-        Almost Done
-      </button>;
-
-    case "ALMOST_DONE":
-      return <button className="action-btn btn-ready"
-        onClick={() => onUpdate(order.id, "READY")}>
-        Mark Ready
-      </button>;
-
-    case "READY":
-      return <button className="action-btn btn-serve"
-        onClick={() => onUpdate(order.id, "SERVED")}>
-        Served
-      </button>;
-
-    default:
-      return null;
-  }
+  return (
+    <button className={`kds-action-btn gopron-font ${current.class}`} onClick={() => onUpdate(order.id, current.next)}>
+      {current.label}
+    </button>
+  );
 };
 
 export default KitchenPanel;

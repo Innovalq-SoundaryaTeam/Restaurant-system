@@ -59,7 +59,7 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
           {!collapsed && <span>Settings</span>}
         </NavLink>
 
-        <NavLink to="/kitchen" className="nav-item" onClick={closeMobile}>
+        <NavLink to="/KitchenLogin" className="nav-item" onClick={closeMobile}>
           <FaCog className="nav-icon" />
           {!collapsed && <span>Kitchen</span>}
         </NavLink>

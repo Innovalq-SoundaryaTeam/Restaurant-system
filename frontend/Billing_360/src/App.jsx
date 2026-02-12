@@ -26,8 +26,11 @@ import OrderTrackPage from './pages/OrderTrackPage';
 import KitchenPanel from './pages/KitchenPanel';
 import AdminLogin from './pages/AdminLogin';
 import AdminMenu from './pages/AdminMenu';
+import KitchenLoginPage from './pages/KitchenLoginPage';
+import KitchenSignup from './pages/KitchenSignup';  
+import AdminSignup from './pages/AdminSignupPage';
 
-// 2. Namespace MUI import to prevent overwriting your component
+// 2. Namespace MUI import to prevent overwriting your component  
 
 
 function App() {
@@ -51,9 +54,12 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/menu" element={<AdminMenu />} />
+          <Route path="/admin/signup" element={<AdminSignup />} />
           
           {/* Kitchen Route */}
           <Route path="/kitchen" element={<KitchenPanel />} />
+          <Route path='/KitchenLogin' element={<KitchenLoginPage />} />
+          <Route path='/KitchenSignup' element={<KitchenSignup />} />
           
           {/* Protected Admin Dashboard Layout */}
           <Route element={<AppLayout />}>

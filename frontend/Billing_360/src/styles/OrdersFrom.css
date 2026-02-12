@@ -1,0 +1,62 @@
+.orders-from-card {
+  background: transparent;
+}
+
+.orders-from-header {
+  margin-bottom: 25px;
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* THE ALIGNMENT FIX: Flex header */
+.progress-info {
+  display: flex;
+  justify-content: space-between; /* Pushes label left, percentage right */
+  align-items: center;
+}
+
+.source-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.source-value {
+  font-size: 1rem;
+  width: 50px;       /* Fixed width prevents jumping */
+  text-align: right; /* Aligns text to the right wall */
+}
+
+/* The Bar Styling */
+.progress-track {
+  height: 8px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #222;
+}
+
+.progress-fill-neon {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Utils */
+.blue-text { color: #007bff; }
+.gopron-font {
+  font-family: 'Gopron', sans-serif;
+  letter-spacing: 1px;
+}

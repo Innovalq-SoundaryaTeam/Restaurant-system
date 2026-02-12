@@ -1,215 +1,152 @@
-/* src/styles/KitchenPanel.css */
+/* Palette: Deep Black #050505, Green #00c853, Blue #007bff, White #ffffff */
 
-/* --- Theme Variables --- */
-:root {
-  --bg-color: #000000;
-  --card-bg: #111111;
-  --text-white: #ffffff;
-  --text-muted: #888888;
-  --border-color: #333333;
-  --accent-color: #2ecc71; /* Green */
-}
-
-.kitchen-container {
+.kds-container {
+  background-color: #050505;
   min-height: 100vh;
-  background-color: var(--bg-color);
-  color: var(--text-white);
-  padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 30px;
+  color: white;
+  font-family: 'Inter', sans-serif;
 }
 
-/* --- Header --- */
-.kitchen-header {
+.gopron-font {
+  font-family: 'Gopron', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* Header Section */
+.kds-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  border-bottom: 2px solid #1a1a1a;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 30px;
 }
 
-.kitchen-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  color: var(--text-white);
+.kds-header h1 { font-size: 2.2rem; margin: 0; }
+
+.stat-pill {
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  border: 1px solid rgba(0, 123, 255, 0.3);
 }
 
-.subtitle {
-  color: var(--text-muted);
-  margin: 5px 0 0 0;
-  font-size: 0.9rem;
-}
-
-.refresh-btn {
-  background: #333;
-  color: var(--text-white);
-  border: 1px solid var(--border-color);
-  padding: 10px 20px;
-  border-radius: 8px;
+.kds-refresh-btn {
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
   cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
   font-weight: 600;
-  transition: background 0.2s;
 }
 
-.refresh-btn:hover {
-  background: #444;
-}
-
-/* --- Grid Layout --- */
-.orders-grid {
+/* Grid Layout */
+.kds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
 }
 
-/* --- Order Card --- */
-.order-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+/* KDS Ticket Cards */
+.kds-card {
+  background: #0d0d0d;
+  border: 1px solid #1f1f1f;
+  border-radius: 20px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.order-card:hover {
-  border-color: #555;
-  transform: translateY(-2px);
+.kds-card:hover {
+  transform: translateY(-5px);
+  border-color: #333;
 }
 
-/* --- Card Header --- */
-.order-header {
+.kds-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 15px;
 }
 
-.header-left {
-  display: flex;
-  flex-direction: column;
-}
+.order-no { color: #007bff; font-size: 1.2rem; }
+.order-time { color: #555; font-size: 0.8rem; display: flex; gap: 5px; align-items: center; }
 
-.order-id {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-white);
-}
-
-.order-time {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.status-badge {
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: rgb(98, 98, 98);
-  text-transform: uppercase;
-}
-
-/* --- Table Info --- */
-.table-info {
-  background: #1a1a1a;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: var(--text-white);
-  margin-bottom: 15px;
-  border: 1px solid #222;
-}
-
-/* --- Items List --- */
-.order-items {
-  flex-grow: 1;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.order-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #222;
-}
-
-.order-item:last-child {
-  border-bottom: none;
-}
-
-.qty-badge {
-  background: #333;
-  color: var(--text-white);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.item-name {
-  color: #ddd;
-  font-size: 0.95rem;
-}
-
-/* --- Actions --- */
-.order-actions {
-  margin-top: auto;
-}
-
-.action-btn {
-  width: 100%;
-  padding: 12px;
+.kds-delete-icon {
+  background: none;
   border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  color: #333;
   cursor: pointer;
-  color: white;
-  transition: opacity 0.2s;
+  transition: 0.2s;
 }
+.kds-delete-icon:hover { color: #ff4444; }
 
-.action-btn:hover {
-  opacity: 0.9;
-}
-
-/* Button Colors */
-.btn-confirm { background-color: #3498db; }
-.btn-prepare { background-color: #9b59b6; }
-.btn-almost { background-color: #e67e22; }
-.btn-ready { background-color: #2ecc71; color: black; }
-.btn-serve { background-color: #7f8c8d; }
-
-/* --- States --- */
-.loading-screen, .empty-state {
+/* Table Info Bar */
+.kds-table-bar {
+  background: #151515;
+  padding: 10px 15px;
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
-  color: var(--text-muted);
-}
-
-.empty-state h3 {
-  color: var(--text-white);
-  margin-bottom: 10px;
-}
-
-.error-banner {
-  background: #c0392b;
-  color: white;
-  padding: 15px;
-  border-radius: 8px;
+  justify-content: space-between;
   margin-bottom: 20px;
-  text-align: center;
+  border: 1px solid #1f1f1f;
+}
+
+.customer-name { color: #888; font-size: 0.85rem; }
+
+/* Items List */
+.kds-items-list {
+  flex-grow: 1;
+  margin-bottom: 25px;
+}
+
+.kds-item-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #151515;
+}
+
+.kds-qty {
+  background: #1a1a1a;
+  color: #00c853;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.kds-item-name { font-weight: 500; font-size: 1rem; color: #eee; }
+
+/* Action Buttons */
+.kds-action-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-blue   { background: #007bff; box-shadow: 0 4px 0 #0056b3; }
+.btn-purple { background: #9b59b6; box-shadow: 0 4px 0 #7d3c98; }
+.btn-orange { background: #e67e22; box-shadow: 0 4px 0 #b35f10; }
+.btn-green  { background: #00c853; box-shadow: 0 4px 0 #008a3a; }
+.btn-white  { background: #ffffff; color: #000; box-shadow: 0 4px 0 #cccccc; }
+
+.kds-action-btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
 }
