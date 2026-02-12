@@ -93,7 +93,7 @@ h1, h2, h3, h4, h5{
 
 .menu-list {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   gap: 35px;
   flex-grow: 1;
 }
@@ -359,7 +359,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .luxury-sidebar {
     border-right: none;
     border-top: var(--glass-border);
-    flex-direction: row;
+    /* flex-direction: row; */
     justify-content: space-around;
     padding: 0 20px;
     align-items: center;
@@ -370,7 +370,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .menu-bottom { display: none; } /* Hide logout on bottom nav */
   
   .menu-list {
-    flex-direction: row;
+    /* flex-direction: row; */
     width: 100%;
     justify-content: space-around;
     margin-bottom: 0;
@@ -383,13 +383,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   /* Adjust Mark Attendance Box */
   .mark-attendance-container {
-    flex-direction: column;
+    /* flex-direction: column; */
     text-align: center;
     gap: 15px;
   }
   
   .mark-attendance-container .d-flex {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 10px;
   }
 }

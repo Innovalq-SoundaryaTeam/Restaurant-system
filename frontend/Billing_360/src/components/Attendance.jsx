@@ -270,7 +270,7 @@ const Attendance = () => {
 
             {/* NEW: Export & Bio-Scan Cards */}
             <Col lg={4} md={6}>
-              <div className="d-flex flex-column gap-3 h-100">
+              <div className="d-flex gap-3 h-100">
                 <Card className="glass-panel action-card-luxury flex-fill d-flex align-items-center justify-content-center p-3" onClick={handleExport} style={{ cursor: 'pointer' }}>
                   <div className="d-flex align-items-center gap-3">
                     <i className="bi bi-file-earmark-spreadsheet-fill fs-2 xls-icon" style={{ color: '#1d6f42' }}></i>
@@ -291,7 +291,7 @@ const Attendance = () => {
           </Row>
 
           {/* Mark Attendance */}
-          <div className="mark-attendance-container glass-panel p-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+          <div className="mark-attendance-container glass-panel p-4 mb-4 d-flex flex-md-row justify-content-between align-items-center gap-3">
             <div><h3 className="mb-1">Mark Your Attendance</h3></div>
             <div className="d-flex gap-3 flex-wrap justify-content-center">
               {!markedToday ? (
