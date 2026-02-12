@@ -44,6 +44,7 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
         </div>
 
         {/* OTHER ITEMS */}
+        {/* OTHER ITEMS (To match your screenshot) */}
         <NavLink to="/orders" className="nav-item" onClick={closeMobile}>
           <FaBox className="nav-icon" />
           {!collapsed && <span>Orders</span>}

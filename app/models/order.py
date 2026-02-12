@@ -43,8 +43,8 @@ class Order(Base):
     payment_method = Column(Enum(PaymentMethod), default=PaymentMethod.UPI)
     payment_status = Column(Enum(PaymentStatus),nullable=False, default=PaymentStatus.PENDING)
     special_instructions = Column(Text)
-    order_date = Column(Date, default=datetime.now)
-    order_time = Column(Time, default=datetime.now)
+    order_date = Column(Date, nullable=False, server_default=func.current_date())
+    order_time = Column(Time, nullable=False, server_default=func.current_time())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

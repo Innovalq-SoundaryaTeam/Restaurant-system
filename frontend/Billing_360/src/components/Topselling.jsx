@@ -1,52 +1,45 @@
+import React from "react";
+import "../styles/Topselling.css";
+
 export default function Topselling() {
   const items = [
-    {
-      name: "Italiano pizza",
-      count: "124 times",
-      price: "$12.56",
-      img: "IMAGE_LINK_HERE",
-    },
-    {
-      name: "Cheese Momos",
-      count: "116 times",
-      price: "$12.56",
-      img: "IMAGE_LINK_HERE",
-    },
-    {
-      name: "French fries",
-      count: "200 times",
-      price: "$12.56",
-      img: "IMAGE_LINK_HERE",
-    },
-    {
-      name: "Cheese Sandwich",
-      count: "50 times",
-      price: "$12.56",
-      img: "IMAGE_LINK_HERE",
-    },
+    { name: "Italiano pizza", count: "124 orders", price: "₹450", img: "https://via.placeholder.com/50" },
+    { name: "Cheese Momos", count: "116 orders", price: "₹180", img: "https://via.placeholder.com/50" },
+    { name: "French fries", count: "200 orders", price: "₹120", img: "https://via.placeholder.com/50" },
+    { name: "Cheese Sandwich", count: "50 orders", price: "₹150", img: "https://via.placeholder.com/50" },
   ];
 
   return (
-    <div className="card">
-      <h3>Top Selling items</h3>
+    <div className="topselling-card">
+      <header className="topselling-header">
+        <h3 className="gopron-font blue-text">Top Selling Items</h3>
+        <span className="view-all">Full Report</span>
+      </header>
 
-      {items.map((item, i) => (
-        <div className="item-row" key={i}>
-          <div className="item-left">
-            <div className="img-box">
-              {/* replace src later */}
-              <img src={item.img} alt="" />
+      <div className="items-list">
+        {items.map((item, i) => (
+          <div className="topselling-item-row" key={i}>
+            {/* Left Section: Fixed Width */}
+            <div className="item-left-content">
+              <div className="rank-badge">{i + 1}</div>
+              <div className="img-container">
+                <img src={item.img} alt={item.name} />
+              </div>
             </div>
 
-            <div>
-              <strong>{item.name}</strong>
-              <small>{item.count}</small>
+            {/* Middle Section: Flexible (Takes all available space) */}
+            <div className="item-details">
+              <span className="item-name">{item.name}</span>
+              <span className="item-count">{item.count}</span>
+            </div>
+
+            {/* Right Section: Fixed Width & Aligned Right */}
+            <div className="item-price gopron-font">
+              {item.price}
             </div>
           </div>
-
-          <span className="price">{item.price}</span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

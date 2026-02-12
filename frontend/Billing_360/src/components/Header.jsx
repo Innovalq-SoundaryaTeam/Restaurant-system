@@ -3,18 +3,18 @@ import { FaBars, FaMoon, FaSun } from "react-icons/fa";
 
 export default function Header({ onToggle, onDarkToggle, dark }) {
   return (
-    <header className="header" style={{  }}>
-      {/* <div className="header-left">
+    <header className="header">
+      <div className="header-left">
         <FaBars className="hamburger" onClick={onToggle} />
 
   
-      </div> */}
+      </div>
 
-      {/* <div className="profile">
+      <div className="profile">
         <button className="dark-btn" onClick={onDarkToggle}>
           {dark ? <FaSun /> : <FaMoon />}
         </button>
-      </div> */}
+      </div>
     </header>
   );
 }

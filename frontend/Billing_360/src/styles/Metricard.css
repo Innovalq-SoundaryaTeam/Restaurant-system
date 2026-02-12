@@ -1,0 +1,104 @@
+.premium-metric-card {
+  position: relative;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 16px;
+  padding: 24px 24px 24px 30px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- THE DYNAMIC UNIQUE LEFT GLOW --- */
+.left-glow-strip {
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 4px;
+  background: var(--accent); /* Uses the unique color prop */
+  border-radius: 0 4px 4px 0;
+  /* Multi-layered box shadow for intense neon effect */
+  box-shadow: 
+    2px 0 8px var(--accent),
+    4px 0 15px var(--accent),
+    0 0 20px var(--accent);
+  opacity: 0.5;
+  transition: all 0.4s ease;
+}
+
+.premium-metric-card:hover {
+  background: #111;
+  transform: translateX(8px); /* Card pushes right away from the glow */
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.premium-metric-card:hover .left-glow-strip {
+  top: 0;
+  bottom: 0;
+  opacity: 1;
+  box-shadow: 
+    2px 0 12px var(--accent),
+    6px 0 25px var(--accent),
+    0 0 40px var(--accent);
+}
+
+/* --- Content Styling --- */
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.card-title {
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 5px;
+}
+
+.card-value {
+  color: #fff;
+  font-size: 2.2rem; /* Larger for better look */
+  margin: 0 0 10px 0;
+}
+
+/* --- Icon Unique Glow --- */
+.icon-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-bloom {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  filter: blur(18px);
+  opacity: 0.15; /* Unique subtle glow behind icon */
+  transition: 0.3s;
+}
+
+.premium-metric-card:hover .icon-bloom {
+  opacity: 0.4;
+  transform: scale(1.3);
+}
+
+.icon-wrapper {
+  font-size: 1.8rem;
+  z-index: 2;
+  /* Icon itself gets a subtle drop shadow of its own color */
+  filter: drop-shadow(0 0 2px var(--accent));
+}
+
+.gopron-font {
+  font-family: 'Gopron', sans-serif;
+}

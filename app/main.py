@@ -150,7 +150,6 @@ async def websocket_endpoint(websocket: WebSocket):
     except:
         websocket_manager.disconnect(websocket)
 
-
 # --------------------------------------------------
 # Root endpoint
 # --------------------------------------------------
