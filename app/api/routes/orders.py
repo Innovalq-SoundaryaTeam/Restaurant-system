@@ -219,5 +219,46 @@ def get_order_by_id(order_id: int, db: Session = Depends(get_db)):
         "table_number": order.table_number,
         "status": order.status.value,
         "total_price": float(order.total_price),
+        "session_id": order.session_id,  # ADD THIS LINE
         "created_at": order.created_at.isoformat(),
+    }
+
+# -------------------- Get Full Session Orders (For Multi-Card View) --------------------
+
+@router.get("/sessions/{session_id}")
+def get_session_orders(session_id: str, db: Session = Depends(get_db)):
+    # 1. Fetch the session details
+    session_obj = db.query(OrderSession).filter(OrderSession.session_id == session_id).first()
+    if not session_obj:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    # 2. Fetch all orders belonging to this session
+    orders = db.query(Order).filter(Order.session_id == session_id).order_by(Order.created_at.asc()).all()
+    
+    result_orders = []
+    for order in orders:
+        # Fetch items for each order
+        items = db.query(OrderItem).filter(OrderItem.order_id == order.id).all()
+        
+        result_orders.append({
+            "id": order.id,
+            "order_number": order.order_number,
+            "status": order.status.value,
+            "total_price": float(order.total_price),
+            "created_at": order.created_at.isoformat(),
+            "items": [
+                {
+                    "name": db.query(MenuItem).get(item.menu_item_id).name,
+                    "quantity": item.quantity,
+                    "price": float(item.price),
+                    "subtotal": float(item.subtotal)
+                } for item in items
+            ]
+        })
+
+    return {
+        "session_id": session_id,
+        "table_number": session_obj.table_number,
+        "status": session_obj.status.value,
+        "orders": result_orders
     }

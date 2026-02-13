@@ -1,0 +1,120 @@
+/* Glassmorphism Background */
+.bill-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: radial-gradient(circle at top left, #1a1a2e, #0f0f0f);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Floating Receipt Card */
+.receipt-paper {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle Neon Glow at the top */
+.receipt-paper::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+}
+
+.brand-name {
+  font-family: 'Gopron', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  background: linear-gradient(to right, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+}
+
+/* Action Buttons Styles */
+.bill-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 450px;
+}
+
+.print-btn, .back-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.print-btn {
+  background: #3a7bd5;
+  color: white;
+  box-shadow: 0 4px 15px rgba(58, 123, 213, 0.4);
+}
+
+.print-btn:hover { background: #00d2ff; transform: translateY(-2px); }
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+/* Table Enhancements */
+.receipt-table {
+  width: 100%;
+  margin: 25px 0;
+  border-collapse: collapse;
+}
+
+.receipt-table th {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 1px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.receipt-table td {
+  padding: 12px 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Total Section with specific typography */
+.receipt-totals {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 20px;
+}
+
+.grand-total {
+  border-top: 1px solid #444;
+  margin-top: 15px;
+  padding-top: 15px;
+  font-size: 1.6rem;
+  color: #00d2ff;
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}

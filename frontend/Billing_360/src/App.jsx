@@ -4,11 +4,14 @@ import { Toaster } from "react-hot-toast";
 // Styles
 import './styles/global.css';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Components & Pages
 import Dashboard from "./components/Dashboard";
 import FoodItems from "./components/FoodItems";
 import AppLayout from './layout/Applayout';
+import Attendance from './components/Attendance';
 
 // 1. Resolve Import Conflict: Use a clear name for your custom component
 import MyMenuItem from './components/MenuItem'; 
@@ -21,6 +24,7 @@ import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderPlacedPage from './pages/OrderPlacedPage';
 import OrderTrackPage from './pages/OrderTrackPage';
+import BillPage from './pages/BillPage';
 
 // Admin/Staff Pages
 import KitchenPanel from './pages/KitchenPanel';
@@ -50,6 +54,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-placed" element={<OrderPlacedPage />} />
           <Route path="/track-order/:orderId" element={<OrderTrackPage />} />
+          <Route path="/checkout/:sessionId" element={<BillPage />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
@@ -64,6 +69,7 @@ function App() {
           {/* Protected Admin Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/attendance" element={<Attendance />} />
             <Route path="/food-items" element={<FoodItems />} />
             
             {/* 3. Render the correct component for the /menu path */}

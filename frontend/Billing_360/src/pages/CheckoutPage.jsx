@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import "../styles/CheckoutPage.css";
 import "../styles/OrderPlacedpage.css";
 
-
 const CheckoutPage = () => {
   const [cart, setCart] = useState([]);
   const [customerData, setCustomerData] = useState({});
@@ -61,7 +60,7 @@ const CheckoutPage = () => {
           special_instructions: ""
         })),
         payment_method: paymentMethod,
-        session_id: sessionId  // Add session_id if exists
+        session_id: sessionId 
       };
 
       const response = await fetch("http://127.0.0.1:8000/api/orders", {
@@ -77,21 +76,20 @@ const CheckoutPage = () => {
 
       const result = await response.json();
       
-      // --- RECTIFICATION START: Align keys with OrderPlacedPage ---
+      // Rectified: Ensure we capture the total price from the response
       const orderDataForStorage = {
         orderId: result.id,
         orderNumber: result.order_number,
-        sessionId: result.session_id,  // Add session_id
-        totalAmount: result.total_price, // Changed from 'total' to 'totalAmount'
+        sessionId: result.session_id,
+        totalAmount: result.total_price || getTotalPrice(), 
         status: result.status || "Pending",
-        tableNumber: tableNumber,        // Added for persistence
-        customerEmail: customerData.email, // Added for persistence
-        billUrl: result.bill_url || result.billUrl || "" // Capture bill link
+        tableNumber: tableNumber,
+        customerEmail: customerData.email,
+        billUrl: result.bill_url || result.billUrl || "" 
       };
 
       localStorage.setItem('lastOrder', JSON.stringify(orderDataForStorage));
       localStorage.removeItem('cart');
-      // --- RECTIFICATION END ---
 
       setOrderDetails(result);
       setOrderPlaced(true);
@@ -106,14 +104,12 @@ const CheckoutPage = () => {
 
   const handleBackToMenu = () => navigate('/usermenu');
 
- const handleTrackOrder = () => {
-  const savedOrder = JSON.parse(localStorage.getItem("lastOrder"));
-  if (savedOrder?.orderId) {
-    navigate(`/track-order/${savedOrder.orderId}`);
-  }
-};
-
-
+  const handleTrackOrder = () => {
+    const savedOrder = JSON.parse(localStorage.getItem("lastOrder"));
+    if (savedOrder?.orderId) {
+      navigate(`/track-order/${savedOrder.orderId}`);
+    }
+  };
 
   // Success UI
   if (orderPlaced && orderDetails) {
@@ -134,7 +130,10 @@ const CheckoutPage = () => {
             </div>
             <div className="summary-item">
               <span>Total Amount:</span>
-              <span className="total-amount">₹{Number(orderDetails.total_price).toFixed(2)}</span>
+              {/* Rectified: Using multiple key fallbacks to ensure total shows */}
+              <span className="total-amount">
+                ₹{Number(orderDetails.total_price || orderDetails.totalAmount || getTotalPrice()).toFixed(2)}
+              </span>
             </div>
           </div>
 

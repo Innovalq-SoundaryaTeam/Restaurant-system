@@ -1,132 +1,109 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaCheckCircle, FaUtensils, FaBoxOpen, FaClipboardCheck, FaArrowLeft, FaFileInvoiceDollar } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaFileInvoiceDollar, FaCircle } from "react-icons/fa";
 import "../styles/OrderTrackPage.css";
 
 const OrderTrackPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [sessionData, setSessionData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const steps = [
-    { id: "PENDING", label: "Confirmed", icon: <FaClipboardCheck /> },
-    { id: "KITCHEN", label: "Preparing", icon: <FaUtensils /> },
-    { id: "READY", label: "Ready", icon: <FaBoxOpen /> },
-    { id: "COMPLETED", label: "Served", icon: <FaCheckCircle /> }
-  ];
-
-  // Wrapped in useCallback to prevent unnecessary re-renders
-  const fetchOrder = useCallback(async (isInitial = false) => {
+  const fetchSessionUpdates = useCallback(async (isInitial = false) => {
     try {
       if (isInitial) setLoading(true);
+      else setIsUpdating(true);
+
       const response = await fetch(`http://127.0.0.1:8000/api/orders/${orderId}`);
-      if (!response.ok) throw new Error("Order not found");
-      
       const data = await response.json();
       
-      // Only update state if the status has actually changed to prevent flicker
-      setOrderDetails((prev) => {
-        if (JSON.stringify(prev) !== JSON.stringify(data)) {
-          return data;
-        }
-        return prev;
-      });
-      
-      setError(null);
+      if (data.session_id) {
+        const sessionRes = await fetch(`http://127.0.0.1:8000/api/sessions/${data.session_id}`);
+        const sessionJson = await sessionRes.json();
+        setSessionData(sessionJson);
+      } else {
+        setSessionData({ orders: [data], table_number: data.table_number });
+      }
     } catch (err) {
-      console.error("Fetch error:", err);
-      // Don't show full error UI on background refresh to keep it smooth
-      if (isInitial) setError(err.message);
+      console.error("Sync Error:", err);
     } finally {
-      if (isInitial) setLoading(false);
+      setLoading(false);
+      setTimeout(() => setIsUpdating(false), 800);
     }
   }, [orderId]);
 
   useEffect(() => {
-    // Initial Fetch
-    fetchOrder(true);
-
-    // Automatic polling every 3 seconds for near-instant updates
-    const interval = setInterval(() => {
-      fetchOrder(false);
-    }, 3000);
-
+    fetchSessionUpdates(true);
+    const interval = setInterval(() => fetchSessionUpdates(false), 4000);
     return () => clearInterval(interval);
-  }, [fetchOrder]);
+  }, [fetchSessionUpdates]);
 
-  if (loading) return <div className="loader-view-dark"><div className="spinner"></div><h2 className="gopron-font">TRACKING...</h2></div>;
-  if (error) return <div className="error-view-dark"><h2>❌ {error}</h2><button onClick={() => navigate("/")}>Home</button></div>;
-  if (!orderDetails) return null;
+  if (loading || !sessionData) return <div className="loader-dark">Syncing Control Panel...</div>;
 
-  const currentStatus = orderDetails.status?.toUpperCase();
-  const currentStepIndex = steps.findIndex(s => s.id === currentStatus);
-  const isServed = currentStatus === "SERVED" || currentStatus === "COMPLETED";
+  const totalSessionAmount = sessionData.orders.reduce((sum, o) => sum + Number(o.total_price), 0);
 
   return (
     <div className="order-track-page dark-theme">
-      <div className="track-container">
-        <div className="track-top">
-          <button className="back-btn-dark" onClick={() => navigate(-1)}><FaArrowLeft /></button>
-          <div className="brand-label">
-            <span className="gopron-font blue-text">BILLING 360</span>
+      <div className="track-wrapper">
+        <header className="premium-header">
+          <div className="header-brand">
+            <button className="back-glass-btn" onClick={() => navigate("/usermenu")}><FaArrowLeft /></button>
+            <div className="table-badge gopron-font">TABLE {sessionData.table_number}</div>
           </div>
-        </div>
+          <div className="header-meta">
+            <div className="cumulative-card">
+              <span className="label">SESSION TOTAL</span>
+              <span className="value gopron-font ">₹{totalSessionAmount.toFixed(2)}</span>
+            </div>
+          </div>
+        </header>
 
-        <div className="status-hero">
-          <h1 className="gopron-font">Order #{orderDetails.order_number.slice(-4)}</h1>
-          <p className="status-subtitle">{isServed ? "Enjoy your meal!" : "We're updating your status live..."}</p>
-        </div>
+        {/* HORIZONTAL CARDS */}
+        
+        <div className="horizontal-neon-strip">
+          {sessionData.orders.map((order, idx) => (
+            <div key={idx} className={`neon-order-card compact ${order.status.toLowerCase()}`}>
+              <div className="card-floating-id">0{idx + 1}</div>
+              
+              <header className="card-top">
+                <span className="order-num gopron-font">ORD #{order.order_number.slice(-4)}</span>
+                <div className="status-indicator">
+                  <FaCircle className="status-dot" />
+                  <span className="status-text">{order.status}</span>
+                </div>
+              </header>
 
-        <div className="delivery-timeline-vertical">
-          {steps.map((step, index) => {
-            // Logic: 
-            // - Done: if the current index in DB is further than this step
-            // - Active: if the current index in DB matches this step
-            const isCompleted = index < currentStepIndex;
-            const isActive = index === currentStepIndex;
-            
-            return (
-              <div key={step.id} className={`v-step-item ${isCompleted ? 'done' : ''} ${isActive ? 'current' : ''}`}>
-                <div className="v-step-left">
-                  <div className="v-icon-box">{step.icon}</div>
-                  {index < steps.length - 1 && <div className="v-step-line"></div>}
-                </div>
-                <div className="v-step-right">
-                  <span className="v-step-label">{step.label}</span>
-                  <span className="v-step-desc">
-                    {isActive ? "Currently here" : isCompleted ? "Finished" : "Waiting..."}
-                  </span>
-                </div>
+              <div className="card-content">
+                {order.items?.map((item, i) => (
+                  <div key={i} className="item-row-wire">
+                    <span className="item-qty gopron-font">{item.quantity}x</span>
+                    <span className="item-name">{item.name}</span>
+                  </div>
+                ))}
               </div>
-            );
-          })}
+
+              <footer className="card-footer">
+                <div className="footer-label-group">
+                  <span className="footer-label">AMOUNT PAYABLE</span>
+                  <span className="footer-amount gopron-font">₹{order.total_price}</span>
+                </div>
+              </footer>
+            </div>
+          ))}
         </div>
 
-        <div className="info-glass-card">
-          <div className="info-item">
-            <span className="info-label">TABLE</span>
-            <span className="info-value gopron-font">{orderDetails.table_number || "TA"}</span>
-          </div>
-          <div className="info-divider"></div>
-          <div className="info-item">
-            <span className="info-label">TOTAL</span>
-            <span className="info-value gopron-font green-text">₹{Number(orderDetails.total_price).toFixed(2)}</span>
-          </div>
-        </div>
-
-        <div className="action-area">
-          {isServed ? (
-            <button className="bill-btn-glow gopron-font" onClick={() => navigate(`/checkout/${orderDetails.session_id}`)}>
-              <FaFileInvoiceDollar /> GENERATE BILL
-            </button>
-          ) : (
-            <button className="add-more-btn gopron-font" onClick={() => navigate("/usermenu")}>
-              + ADD MORE ITEMS
-            </button>
-          )}
-        </div>
+        <footer className="action-dock-wire">
+          <button className="dock-btn secondary gopron-font" onClick={() => navigate("/usermenu")}>
+            <FaPlus /> Add more item
+          </button>
+          <button 
+  className="dock-btn primary gopron-font" 
+  onClick={() => navigate(`/checkout/${sessionData.session_id || orderId}`)}
+>
+    Generate bill <FaFileInvoiceDollar />
+</button>
+        </footer>
       </div>
     </div>
   );
