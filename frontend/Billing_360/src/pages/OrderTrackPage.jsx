@@ -23,7 +23,7 @@ const OrderTrackPage = () => {
         const sessionJson = await sessionRes.json();
         setSessionData(sessionJson);
       } else {
-        setSessionData({ orders: [data], table_number: data.table_number });
+        setSessionData({ orders: [data], table_number: data.table_number, session_id: data.session_id });
       }
     } catch (err) {
       console.error("Sync Error:", err);
@@ -38,6 +38,33 @@ const OrderTrackPage = () => {
     const interval = setInterval(() => fetchSessionUpdates(false), 4000);
     return () => clearInterval(interval);
   }, [fetchSessionUpdates]);
+
+  // NEW: Function to trigger WhatsApp bill via Backend
+  const handleGenerateBill = async () => {
+    try {
+      setIsUpdating(true);
+      const targetId = sessionData.orders[0]?.id || orderId;
+
+      // Ensure the URL matches your backend route (main.py uses /api/generate-bill)
+      const response = await fetch(`http://127.0.0.1:8000/api/generate-bill/${targetId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.ok) {
+        alert("Bill sent successfully to your WhatsApp! ✅");
+        navigate(`/checkout/${sessionData.session_id || orderId}`);
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.detail || "Could not send bill"}`);
+      }
+    } catch (err) {
+      console.error("Billing Error:", err);
+      alert("Failed to connect to server.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (loading || !sessionData) return <div className="loader-dark">Syncing Control Panel...</div>;
 
@@ -59,30 +86,25 @@ const OrderTrackPage = () => {
           </div>
         </header>
 
-        {/* HORIZONTAL CARDS */}
-        
         <div className="horizontal-neon-strip">
           {sessionData.orders.map((order, idx) => (
-            <div key={idx} className={`neon-order-card compact ${order.status.toLowerCase()}`}>
+            <div key={idx} className={`neon-order-card compact ${order.status?.toLowerCase()}`}>
               <div className="card-floating-id">0{idx + 1}</div>
-              
               <header className="card-top">
-                <span className="order-num gopron-font">ORD #{order.order_number.slice(-4)}</span>
+                <span className="order-num gopron-font">ORD #{order.order_number?.slice(-4) || order.id}</span>
                 <div className="status-indicator">
                   <FaCircle className="status-dot" />
                   <span className="status-text">{order.status}</span>
                 </div>
               </header>
-
               <div className="card-content">
                 {order.items?.map((item, i) => (
                   <div key={i} className="item-row-wire">
                     <span className="item-qty gopron-font">{item.quantity}x</span>
-                    <span className="item-name">{item.name}</span>
+                    <span className="item-name">{item.item_name || item.name}</span>
                   </div>
                 ))}
               </div>
-
               <footer className="card-footer">
                 <div className="footer-label-group">
                   <span className="footer-label">AMOUNT PAYABLE</span>
@@ -98,11 +120,12 @@ const OrderTrackPage = () => {
             <FaPlus /> Add more item
           </button>
           <button 
-  className="dock-btn primary gopron-font" 
-  onClick={() => navigate(`/checkout/${sessionData.session_id || orderId}`)}
->
-    Generate bill <FaFileInvoiceDollar />
-</button>
+            className="dock-btn primary gopron-font" 
+            onClick={handleGenerateBill}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Sending..." : "Generate bill"} <FaFileInvoiceDollar />
+          </button>
         </footer>
       </div>
     </div>

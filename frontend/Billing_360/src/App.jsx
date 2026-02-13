@@ -2,18 +2,16 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from "react-hot-toast";
 
 // Styles
-import './styles/global.css';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import './styles/global.css';
+import './App.css';
 
-// Components & Pages
+// Layout & Admin/Staff Components
+import AppLayout from './layout/Applayout';
 import Dashboard from "./components/Dashboard";
 import FoodItems from "./components/FoodItems";
-import AppLayout from './layout/Applayout';
 import Attendance from './components/Attendance';
-
-// 1. Resolve Import Conflict: Use a clear name for your custom component
 import MyMenuItem from './components/MenuItem'; 
 
 // Customer Pages
@@ -25,8 +23,9 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderPlacedPage from './pages/OrderPlacedPage';
 import OrderTrackPage from './pages/OrderTrackPage';
 import BillPage from './pages/BillPage';
+import OrdersPage from './pages/OrdersPage';
 
-// Admin/Staff Pages
+// Admin & Kitchen Pages
 import KitchenPanel from './pages/KitchenPanel';
 import AdminLogin from './pages/AdminLogin';
 import AdminMenu from './pages/AdminMenu';
@@ -34,12 +33,9 @@ import KitchenLoginPage from './pages/KitchenLoginPage';
 import KitchenSignup from './pages/KitchenSignup';  
 import AdminSignup from './pages/AdminSignupPage';
 
-// 2. Namespace MUI import to prevent overwriting your component  
-
-
 function App() {
   return (
-    <Router>
+    <Router> {/* Fixed: Using Router as defined in imports */}
       <Toaster position="bottom-center" />
       <div className="App">
         <Routes>
@@ -71,14 +67,15 @@ function App() {
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/food-items" element={<FoodItems />} />
-            
-            {/* 3. Render the correct component for the /menu path */}
             <Route path="/menu" element={<AdminMenu />} />
-            
             <Route path="/pos" element={<div>POS Page</div>} />
             <Route path="/transaction" element={<div>Transaction Page</div>} />
             <Route path="/booking" element={<div>Booking Page</div>} />
             <Route path="/order-status" element={<div>Order Status Page</div>} />
+
+            {/* Soundarya's Routes */}
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/bill/:orderId" element={<BillPage />} />
           </Route>
         </Routes>
       </div>

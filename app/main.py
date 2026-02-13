@@ -1,128 +1,121 @@
 import sys
 import os
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, WebSocket
+from datetime import datetime
+from urllib.parse import unquote
+
+from fastapi import FastAPI, WebSocket, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from app.api.routes import kitchen as kitchen_routes
-from app.api.routes import attendance
-from app.api.routes.attendance import router as attendance_router
+from twilio.rest import Client
+import mysql.connector
+from mysql.connector import Error
+from dotenv import load_dotenv
 
+# Configure Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Load environment variables
+load_dotenv()
 
 # --------------------------------------------------
-# Load configuration safely
+# Safe Imports for Database & Config
 # --------------------------------------------------
 try:
-    from app.core.config import DATABASE_URL, ConfigurationError
-except Exception as e:
-    print(f"Configuration Error: {e}")
-    DATABASE_URL = None
-    ConfigurationError = Exception
-
-# --------------------------------------------------
-# Load database safely
-# --------------------------------------------------
-try:
+    from app.core.config import DATABASE_URL
     from app.db.database import Base, engine, test_database_connection
-    from app.db.database import DatabaseConnectionError
 except Exception as e:
-    print(f"Database Connection Error: {e}")
-    Base = None
-    engine = None
-    test_database_connection = None
-    DatabaseConnectionError = Exception
+    logger.error(f"Initialization Error: {e}")
+    Base = engine = None
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
 # --------------------------------------------------
-# Import models (ensures tables are registered)
+# Import API routers & Models
 # --------------------------------------------------
 from app.models import menu, order, table, customer
-
-# --------------------------------------------------
-# Import API routers
-# --------------------------------------------------
-from app.api.routes import menu as menu_routes
-from app.api.routes import orders as order_routes
-from app.api.routes import tables as table_routes
-from app.api.routes import admin as admin_routes
-from app.api.routes import billing as billing_routes
-
-# ✅ Import websocket_manager ONLY (not websocket_endpoint)
+from app.api.routes import (
+    menu as menu_routes,
+    orders as order_routes,
+    tables as table_routes,
+    admin as admin_routes,
+    billing as billing_routes,
+    kitchen as kitchen_routes,
+    attendance
+)
 from app.services.websocket_service import websocket_manager
 
 # --------------------------------------------------
-# Create tables
+# Helpers
 # --------------------------------------------------
-def create_tables():
-    if engine is None or Base is None:
-        print("❌ Cannot create tables: database not initialized")
-        return False
-
+def get_db_connection():
     try:
-        print("📦 Creating / verifying database tables...")
-        Base.metadata.create_all(bind=engine)
-        print("✅ Database tables ready")
-        return True
+        url = os.getenv("DATABASE_URL")
+        if not url:
+            logger.error("❌ DATABASE_URL missing from .env")
+            raise ValueError("DATABASE_URL missing")
+
+        # More robust parsing using actual URL tools
+        from urllib.parse import urlparse, unquote
+        
+        # Replace the driver prefix so urlparse understands it
+        if url.startswith("mysql+pymysql://"):
+            url = url.replace("mysql+pymysql://", "mysql://")
+        
+        parsed = urlparse(url)
+        
+        connection = mysql.connector.connect(
+            host=parsed.hostname or "localhost",
+            user=parsed.username,
+            password=unquote(parsed.password or ""),
+            database=parsed.path.lstrip('/')
+        )
+        return connection
     except Exception as e:
-        print(f"❌ Error creating tables: {e}")
-        return False
+        logger.error(f"❌ Connection Failed: {str(e)}")
+        # This will show the real error in your browser's 'Network' tab response
+        raise HTTPException(status_code=500, detail=f"DB Error: {str(e)}")
+
+def create_tables():
+    if engine and Base:
+        try:
+            Base.metadata.create_all(bind=engine)
+            logger.info("✅ Database tables verified/created")
+        except Exception as e:
+            logger.error(f"❌ Table creation failed: {e}")
 
 # --------------------------------------------------
-# App lifespan
+# App Lifespan
 # --------------------------------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("\n" + "=" * 60)
-    print("🚀 Starting Restaurant Backend API")
-    print("=" * 60)
-
-    if test_database_connection:
-        if test_database_connection():
-            print("✅ Database connection successful")
-            create_tables()
-        else:
-            print("❌ Database connection failed")
-    else:
-        print("⚠️ Database test function not available")
-
-    print("📘 API Docs: http://localhost:8000/docs")
-    print("📕 Redoc:   http://localhost:8000/redoc")
-    print("=" * 60 + "\n")
-
+    print("\n🚀 Starting Restaurant Backend API")
+    if test_database_connection and test_database_connection():
+        create_tables()
     yield
-
-    print("\n🛑 Shutting down API...")
     if engine:
         engine.dispose()
         print("🔒 Database connections closed")
 
 # --------------------------------------------------
-# FastAPI app
+# FastAPI App Instance
 # --------------------------------------------------
 app = FastAPI(
     title="Restaurant Management API",
-    description="QR-based Restaurant Ordering System Backend",
-    version="1.0.0",
     lifespan=lifespan
 )
 
-# --------------------------------------------------
-# CORS
-# --------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # --------------------------------------------------
-# API Routers
+# Register Routers
 # --------------------------------------------------
 app.include_router(menu_routes.router, prefix="/api", tags=["Menu"])
 app.include_router(order_routes.router, prefix="/api", tags=["Orders"])
@@ -130,68 +123,120 @@ app.include_router(table_routes.router, prefix="/api", tags=["Tables"])
 app.include_router(admin_routes.router, prefix="/api", tags=["Admin"])
 app.include_router(billing_routes.router, prefix="/api", tags=["Billing"])
 app.include_router(kitchen_routes.router, prefix="/api", tags=["Kitchen"])
-app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendance"])
-
+app.include_router(attendance.router, prefix="/api/attendance", tags=["Attendance"])
 
 # --------------------------------------------------
-# ✅ WebSocket route (Correct Version)
+# WebSocket & System Routes
 # --------------------------------------------------
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket_manager.connect(websocket)
     try:
         while True:
-            # Keep connection alive
             await websocket.receive_text()
     except:
         websocket_manager.disconnect(websocket)
 
-# --------------------------------------------------
-# Root endpoint
-# --------------------------------------------------
 @app.get("/")
 def root():
-    return {
-        "message": "Restaurant Backend Running 🔥",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "health": "/health"
-    }
+    return {"message": "Restaurant Backend Running 🔥", "docs": "/docs"}
 
-# --------------------------------------------------
-# Health check
-# --------------------------------------------------
 @app.get("/health")
 def health_check():
-    if engine is None:
-        return {
-            "status": "unhealthy",
-            "database": "not_configured"
-        }
-
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        return {
-            "status": "healthy",
-            "database": "connected"
-        }
+        return {"status": "healthy", "database": "connected"}
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "database": "disconnected",
-            "error": str(e)
-        }
+        return {"status": "unhealthy", "error": str(e)}
 
 # --------------------------------------------------
-# Local run
+# Twilio / WhatsApp Billing Routes
 # --------------------------------------------------
+TWILIO_SID = os.getenv("TWILIO_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_NUMBER = os.getenv("TWILIO_WHATSAPP_NUMBER")
+
+def get_twilio_client():
+    if not TWILIO_SID or not TWILIO_AUTH_TOKEN:
+        raise HTTPException(status_code=500, detail="Twilio not configured")
+    return Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
+
+def format_whatsapp_message(customer_name, order_id, items, total_amount):
+    message = f"🍽️ *RESTAURANT BILL*\n\n👤 Customer: {customer_name}\n🧾 Order ID: #{order_id}\n📅 Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n📋 *Items:*\n"
+    for item in items:
+        # Handling different item key naming from different database schemas
+        name = item.get("item_name") or item.get("name")
+        line_total = float(item["price"]) * int(item["quantity"])
+        message += f"• {name} x{item['quantity']} - ₹{line_total:.2f}\n"
+    message += f"\n💰 *Total Amount: ₹{total_amount:.2f}*\n\nThank you for dining with us! 🙏"
+    return message
+
+@app.post("/api/generate-bill/{order_id}")
+def generate_bill(order_id: int):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    try:
+        # 1. Fetch Order and Customer Details
+        cursor.execute("""
+            SELECT 
+                o.id, 
+                o.total_price, 
+                c.name AS customer_name, 
+                c.phone_number AS customer_phone
+            FROM orders o
+            JOIN customers c ON o.customer_id = c.id
+            WHERE o.id = %s
+        """, (order_id,))
+        order_data = cursor.fetchone()
+
+        if not order_data:
+            raise HTTPException(status_code=404, detail=f"Order ID {order_id} not found.")
+
+        # 2. JOIN order_items with 'menu_items' 
+        # Using 'menu_items' as the table name based on your schema column 'menu_item_id'
+        cursor.execute("""
+            SELECT 
+                m.name, 
+                oi.quantity, 
+                oi.price 
+            FROM order_items oi
+            JOIN menu_items m ON oi.menu_item_id = m.id
+            WHERE oi.order_id = %s
+        """, (order_id,))
+        items = cursor.fetchall()
+
+        # 3. Format and Send via Twilio
+        msg_body = format_whatsapp_message(
+            order_data["customer_name"], 
+            order_data["id"], 
+            items, 
+            order_data["total_price"]
+        )
+
+        client = get_twilio_client()
+        client.messages.create(
+            body=msg_body,
+            from_=TWILIO_WHATSAPP_NUMBER,
+            to=f"whatsapp:{order_data['customer_phone']}"
+        )
+
+        # 4. Update order status to CONFIRMED
+        cursor.execute("UPDATE orders SET status = 'CONFIRMED' WHERE id = %s", (order_id,))
+        connection.commit()
+        
+        return {"status": "success", "message": "WhatsApp bill sent!"}
+
+    except mysql.connector.Error as err:
+        logger.error(f"SQL Error: {err}")
+        raise HTTPException(status_code=500, detail=f"Database error: {err.msg}")
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        connection.close()
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
