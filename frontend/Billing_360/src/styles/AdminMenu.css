@@ -1,0 +1,127 @@
+.admin-menu-container {
+  padding: 30px;
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.refresh-btn {
+  background: #1f1f1f;
+  color: white;
+  border: 1px solid #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.refresh-btn:hover {
+  background: #333;
+  border-color: #00c853;
+}
+
+/* Grid Layout */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+/* Card Styling */
+.menu-item-card {
+  background: #121212;
+  border: 1px solid #1f1f1f;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
+.menu-item-card:hover {
+  border-color: #00c853;
+  transform: translateY(-5px);
+}
+
+.item-image {
+  position: relative;
+  height: 200px;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.8);
+}
+
+.availability-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.availability-badge.available { color: #00c853; }
+.availability-badge.unavailable { color: #ff5252; }
+
+.item-details { padding: 20px; }
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.price-row h3 { margin: 0; font-size: 1.2rem; }
+
+.price {
+  color: #00c853;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.category-tag {
+  display: inline-block;
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.description {
+  color: #666;
+  font-size: 0.9rem;
+  height: 40px;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.meta-info {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #1f1f1f;
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+  font-size: 0.85rem;
+}
+
+/* Loading State */
+.loading-container {
+  text-align: center;
+  padding: 100px 0;
+  color: #888;
+}

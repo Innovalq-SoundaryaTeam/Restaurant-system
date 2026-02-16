@@ -1,0 +1,152 @@
+/* Palette: Deep Black #050505, Green #00c853, Blue #007bff, White #ffffff */
+
+.kds-container {
+  background-color: #050505;
+  min-height: 100vh;
+  padding: 30px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.gopron-font {
+  font-family: 'Gopron', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* Header Section */
+.kds-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #1a1a1a;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.kds-header h1 { font-size: 2.2rem; margin: 0; }
+
+.stat-pill {
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.kds-refresh-btn {
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 600;
+}
+
+/* Grid Layout */
+.kds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* KDS Ticket Cards */
+.kds-card {
+  background: #0d0d0d;
+  border: 1px solid #1f1f1f;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.kds-card:hover {
+  transform: translateY(-5px);
+  border-color: #333;
+}
+
+.kds-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.order-no { color: #007bff; font-size: 1.2rem; }
+.order-time { color: #555; font-size: 0.8rem; display: flex; gap: 5px; align-items: center; }
+
+.kds-delete-icon {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.kds-delete-icon:hover { color: #ff4444; }
+
+/* Table Info Bar */
+.kds-table-bar {
+  background: #151515;
+  padding: 10px 15px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border: 1px solid #1f1f1f;
+}
+
+.customer-name { color: #888; font-size: 0.85rem; }
+
+/* Items List */
+.kds-items-list {
+  flex-grow: 1;
+  margin-bottom: 25px;
+}
+
+.kds-item-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #151515;
+}
+
+.kds-qty {
+  background: #1a1a1a;
+  color: #00c853;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.kds-item-name { font-weight: 500; font-size: 1rem; color: #eee; }
+
+/* Action Buttons */
+.kds-action-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-blue   { background: #007bff; box-shadow: 0 4px 0 #0056b3; }
+.btn-purple { background: #9b59b6; box-shadow: 0 4px 0 #7d3c98; }
+.btn-orange { background: #e67e22; box-shadow: 0 4px 0 #b35f10; }
+.btn-green  { background: #00c853; box-shadow: 0 4px 0 #008a3a; }
+.btn-white  { background: #ffffff; color: #000; box-shadow: 0 4px 0 #cccccc; }
+
+.kds-action-btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}

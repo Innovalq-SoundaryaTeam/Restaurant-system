@@ -1,0 +1,135 @@
+/* src/styles/AdminLogin.css */
+
+.admin-login-container {
+  min-height: 100vh; /* Changed to full height for better centering */
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px; /* Reduced radius */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 320px; /* Reduced width significantly */
+  width: 100%;
+  overflow: hidden;
+}
+
+.login-header {
+  background: #f8f9fa;
+  padding: 15px; /* Reduced padding */
+  text-align: center;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.login-header h1 {
+  color: #333;
+  margin: 0 0 5px 0;
+  font-size: 1.4rem; /* Smaller font */
+  font-weight: 600;
+}
+
+.login-header p {
+  color: #666;
+  margin: 0;
+  font-size: 0.85rem; /* Smaller font */
+}
+
+.login-form {
+  padding: 20px; /* Reduced padding */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Reduced gap */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.85rem; /* Smaller label */
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px 12px; /* Slimmer inputs */
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  color: black;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.login-btn {
+  width: 100%;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  padding: 10px; /* Slimmer button */
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-footer {
+  background: #f8f9fa;
+  padding: 10px;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.login-footer p {
+  color: #666;
+  margin: 2px 0;
+  font-size: 0.75rem; /* Smaller footer text */
+}
+
+.login-footer p:first-child {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 100%;
+    margin: 10px;
+  }
+}

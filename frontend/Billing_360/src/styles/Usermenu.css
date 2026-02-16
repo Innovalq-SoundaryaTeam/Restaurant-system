@@ -1,0 +1,143 @@
+Usermenu.css
+
+/* 1. Global Variables & Reset */
+:root {
+  /* REMOVED the violet accent-color variable */
+  /* New variable for the green used on hovers for consistency */
+  --hover-green: #0b8248;
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-white: #ffffff;
+  --text-gray: #a0a0a0;
+}
+
+.menu-app {
+  background-color: var(--bg-color);
+  color: var(--text-white);
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 2. Header Styles */
+.menu-app__header {
+  text-align: center;
+  padding: 40px 0;
+  margin-bottom: 20px;
+}
+
+.menu-app__title {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.menu-app__subtitle {
+  color: var(--text-gray);
+  margin-top: 10px;
+}
+
+/* 3. The Grid Layout */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 4. Card Styling */
+.item-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  /* ADDED: Base border so it doesn't jump on hover */
+  border: 2px solid transparent;
+  /* MODIFIED: Added border-color to transition */
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-5px);
+  /* ADDED: Change border color on hover */
+  border-color: var(--hover-green);
+}
+
+/* Media/Image styles */
+.item-card__media {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.item-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-card__tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* 5. Card Content & Button */
+.item-card__content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.item-card__name {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+}
+
+.item-card__description {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.item-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #333;
+  padding-top: 15px;
+}
+
+.item-card__price {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.item-card__add-btn {
+  /* MODIFIED: Removed violet, changed to neutral dark gray */
+  background-color: #333333;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.item-card__add-btn:hover {
+  /* MODIFIED: Using the new variable for consistency */
+  background-color: var(--hover-green);
+}

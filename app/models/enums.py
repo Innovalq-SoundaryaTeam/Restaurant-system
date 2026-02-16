@@ -1,0 +1,13 @@
+import enum
+
+class OrderStatus(str, enum.Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    # Add PREPARING here
+    PREPARING = "PREPARING" 
+    KITCHEN = "KITCHEN"
+    READY = "READY"
+    COMPLETED = "COMPLETED"
+    SERVED = "SERVED"
+    CANCELLED = "CANCELLED"
+    ARCHIVED = "ARCHIVED"

@@ -1,0 +1,155 @@
+/* app.css - HotelPro Midnight Theme (Compact) */
+
+/* 1. Root Reset */
+#root {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* 2. Global Body Styling */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  font-size: 14px; /* Set a smaller base font size */
+}
+
+/* 3. Structural Layout */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0a0a0a;
+}
+
+/* 4. Main Content Wrapper */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column; 
+  height: 100vh;
+  overflow: hidden;
+  background-color: #0a0a0a;
+}
+
+/* 5. Scrollable Content Area (Compact Padding) */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px; /* Reduced from 25px */
+  background-color: #0a0a0a;
+}
+
+/* 6. Utility Classes - Compact Card */
+.card {
+  background: #121212;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px; /* Reduced from 12px */
+  padding: 15px;      /* Reduced from 20px */
+}
+
+/* Scrollbar Styling (Slimmer) */
+.content-area::-webkit-scrollbar {
+  width: 6px; /* Reduced from 8px */
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Header.css - Compact Version */
+.header {
+  height: 50px; /* Reduced from 65px */
+  background-color: #0c0c0f;
+  border-bottom: 1px solid #1f1f1f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px; /* Reduced padding */
+  z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hamburger, .dark-btn {
+  color: #ffffff !important;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Reduced from 30px */
+}
+
+.hamburger {
+  color: #ffffff;
+  font-size: 1rem; /* Smaller icon */
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hamburger:hover {
+  color: #afd4bf;
+}
+
+.header-left .links {
+  display: flex;
+  gap: 15px; /* Reduced gap */
+}
+
+.header-left .links a {
+  color: #888;
+  text-decoration: none;
+  font-size: 0.85rem; /* Smaller font */
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.header-left .links a:hover, 
+.header-left .links a.active {
+  color: #ffffff;
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Reduced gap */
+}
+
+.profile img {
+  width: 28px;  /* Reduced from 35px */
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #1f1f1f;
+}
+
+.dark-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1rem; /* Smaller icon */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.dark-btn:hover {
+  color: #ffab40;
+}

@@ -1,0 +1,173 @@
+/* --- Global Theme & Wrapper --- */
+.order-track-page.dark-theme {
+  background: radial-gradient(circle at top right, #0a0a0a, #000);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.back-glass-btn{
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.back-glass-btn:hover{
+  transform: scale(1.1);
+}
+.track-wrapper {
+  width: 92%;
+  max-width: 1500px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0;
+  height: 100%;
+}
+
+/* --- Header & Typography --- */
+.premium-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.gopron-font {
+  font-family: 'Gopron', sans-serif;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+}
+
+.table-badge {
+  background: #111;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  font-size: 1.1rem;
+}
+
+.cumulative-card {
+  background: rgba(13, 13, 13, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 20px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.card-floating-id{
+  background: #111;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  font-size: 1.1rem;
+}
+
+.card-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+}
+
+.order-num gopron-font{
+  padding: 10px 10px;
+  font-size: 1.2rem;
+  font-family: 'Gopron', sans-serif;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+}
+
+
+/* --- Horizontal Neon Strip --- */
+.horizontal-neon-strip {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+  overflow-x: auto;
+  padding: 20px 10px 40px 10px;
+  flex: 1;
+  align-items: center;
+}
+
+.neon-order-card.compact {
+  min-width: 280px; 
+  height: 360px;    
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s ease;
+}
+
+/* --- Dynamic Status Styling --- */
+.neon-order-card.pending { border-bottom: 4px solid #007bff; }
+.neon-order-card.pending:hover { box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2); }
+.pending .status-text { color: #007bff; text-shadow: 0 0 8px rgba(0, 123, 255, 0.5); }
+.pending .status-dot { color: #007bff; }
+
+.neon-order-card.kitchen { border-bottom: 4px solid #ffab40; }
+.neon-order-card.kitchen:hover { box-shadow: 0 10px 30px rgba(255, 171, 64, 0.2); }
+.kitchen .status-text { color: #ffab40; text-shadow: 0 0 8px rgba(255, 171, 64, 0.5); }
+.kitchen .status-dot { color: #ffab40; }
+
+.neon-order-card.ready { border-bottom: 4px solid #00c853; }
+.neon-order-card.ready:hover { box-shadow: 0 10px 30px rgba(0, 200, 83, 0.2); }
+.ready .status-text { color: #00c853; text-shadow: 0 0 8px rgba(0, 200, 83, 0.5); }
+.ready .status-dot { color: #00c853; }
+
+/* --- Micro-animations --- */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.status-dot {
+  font-size: 6px;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.3); }
+}
+
+/* --- Attractive Text Details --- */
+.status-text {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.item-qty { color: #007bff; font-size: 0.9rem; }
+.item-name { color: #bbbbbb; font-size: 0.9rem; font-weight: 500; text-transform: capitalize; padding-left: 10px; }
+
+.label{
+  font-size: larger;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.footer-label-group { display: flex; flex-direction: column; align-items: flex-end; width: 100%; }
+.footer-label { font-size: 8px; color: #e1e1e1; font-weight: 900; letter-spacing: 2px; }
+.footer-amount { font-size: 1.3rem; color: #00c853; text-shadow: 0 0 15px rgba(0, 200, 83, 0.3); }
+
+/* --- Bottom Actions --- */
+.action-dock-wire { display: flex; justify-content: space-between; padding-top: 20px; }
+.dock-btn { padding: 16px 35px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.3s; }
+.dock-btn.primary { background: #00c853; color: white; border: none; box-shadow: 0 10px 25px rgba(0, 200, 83, 0.3); }
+.dock-btn.primary:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0, 200, 83, 0.5); }

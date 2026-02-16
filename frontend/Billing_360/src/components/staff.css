@@ -1,0 +1,76 @@
+.staff-container {
+  padding: 40px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  min-height: 100vh;
+  color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.form-card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.form-card input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.add-btn {
+  grid-column: span 2;
+  background: #22c55e;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #16a34a;
+}
+
+.table-card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: #334155;
+}
+
+tr:nth-child(even) {
+  background: #273549;
+}
+
+.delete-btn {
+  background: #ef4444;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
