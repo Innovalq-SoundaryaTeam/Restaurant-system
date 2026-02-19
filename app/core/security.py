@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -8,75 +7,88 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
-from app.db.database import get_db
+from app.core.config import settings
+from app.core.deps import get_db
 from app.models.staff import Staff
 
-# ===============================
-# CONFIG
-# ===============================
-SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_THIS_SUPER_SECRET_KEY")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_HOURS = 24
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-security = HTTPBearer()
 
 # ===============================
-# PASSWORD / PIN FUNCTIONS
+# PASSWORD HASHING
 # ===============================
 
-def hash_pin(pin: str) -> str:
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
+
+security = HTTPBearer(auto_error=False)
+
+
+# ===============================
+# HASH / VERIFY
+# ===============================
+
+def hash_pin(pin: str):
     return pwd_context.hash(pin)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-# Keep this alias just in case other files use it
+
 verify_pin = verify_password
+
 
 # ===============================
 # CREATE JWT TOKEN
 # ===============================
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+    data: dict,
+    expires_delta: Optional[timedelta] = None
+) -> str:
+
     to_encode = data.copy()
-    
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
+
+    expire = datetime.now(timezone.utc) + (
+        expires_delta
+        if expires_delta
+        else timedelta(hours=int(settings.ACCESS_TOKEN_EXPIRE_HOURS))
+    )
 
     to_encode.update({"exp": expire})
-    
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    return jwt.encode(
+        to_encode,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+
 
 # ===============================
-# GET CURRENT LOGGED-IN STAFF
+# GET CURRENT USER
 # ===============================
 
 def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> Staff:
-
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authorization token required"
-        )
 
     token = credentials.credentials
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        
-        # Look for 'sub' (phone number) 
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+
         phone_number: str = payload.get("sub")
 
         if phone_number is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token: missing subject"
+                detail="Invalid token"
             )
 
     except JWTError:
@@ -85,8 +97,9 @@ def get_current_user(
             detail="Token is invalid or expired"
         )
 
-    # Query by phone number
-    user = db.query(Staff).filter(Staff.phone == phone_number).first()
+    user = db.query(Staff).filter(
+        Staff.phone == phone_number
+    ).first()
 
     if not user:
         raise HTTPException(
@@ -95,3 +108,30 @@ def get_current_user(
         )
 
     return user
+
+def get_current_admin(
+    user: Staff = Depends(get_current_user)
+) -> Staff:
+
+    if user.role.upper() != "ADMIN":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+
+    return user
+
+def require_roles(*roles):
+
+    def role_checker(
+        user: Staff = Depends(get_current_user)
+    ):
+        if user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permission denied"
+            )
+
+        return user
+
+    return role_checker

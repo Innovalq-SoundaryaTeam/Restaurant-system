@@ -1,0 +1,141 @@
+.settings-container{
+  padding:50px;
+  min-height:100vh;
+  background:linear-gradient(135deg,#020617,#031224);
+  color:white;
+}
+
+/* TITLE */
+
+.settings-title{
+  font-size:34px;
+  margin-bottom:30px;
+}
+
+
+/* 🔥 AUTO RESPONSIVE GRID MENU */
+
+.settings-menu-grid{
+
+  display:grid;
+
+  grid-template-columns:
+      repeat(auto-fit, minmax(180px,1fr));
+
+  gap:16px;
+
+  margin-bottom:40px;
+}
+
+
+/* MENU BUTTON */
+
+.menu-btn{
+
+  padding:14px 18px;
+  border-radius:12px;
+  border:none;
+
+  background:rgba(255,255,255,0.04);
+  color:white;
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+.menu-btn:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+/* ACTIVE */
+
+.menu-btn.active{
+
+  background:#00c853;
+  color:black;
+  font-weight:600;
+
+  box-shadow:0 8px 20px rgba(250,204,21,.35);
+}
+
+
+/* CONTENT PANEL */
+
+.settings-content{
+
+  padding:40px;
+  border-radius:18px;
+
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(14px);
+
+}
+
+
+/* 🔥 GRID FORM */
+
+.form-grid{
+
+  display:grid;
+
+  grid-template-columns:
+      repeat(auto-fit, minmax(260px,1fr));
+
+  gap:20px;
+}
+.form-grid input ,.form-grid textarea{
+    border: 2px solid #5dffaee2;
+    /* outline: none; */
+}
+.form-grid ::placeholder{
+    color: #919191;
+}
+
+.form-grid :focus{
+    outline: none;
+    box-shadow: -2px 3px 0px 2px #4aff96b6;
+}
+
+
+/* INPUTS */
+
+input, textarea{
+
+  padding:14px;
+  border-radius:10px;
+  border:none;
+
+  background:rgba(255,255,255,.04);
+  color:white;
+}
+
+textarea{
+  grid-column:1 / -1;
+  height:120px;
+}
+
+
+/* SAVE BUTTON */
+
+.save-btn{
+
+  grid-column:1 / -1;
+
+  justify-self:start;
+
+  padding:14px 26px;
+
+  border:none;
+  border-radius:12px;
+
+  background:#00c853;
+  color:black;
+
+  font-weight:700;
+  cursor:pointer;
+}
+
+.save-btn:hover{
+  transform:scale(1.05);
+}

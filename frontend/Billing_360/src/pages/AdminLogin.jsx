@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/AdminLogin.css';
+import API from "../api/axios";
 
 export default function AdminLogin() {
   
@@ -8,49 +9,48 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+  const token = localStorage.getItem("adminToken");
+
+  // if (token) {
+  //   navigate("/dashboard");
+  // }
+},[]);
   
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          phone_number: phoneNumber, 
-          password: password 
-        }),
-      });
+  try {
+    const response = await API.post("/api/admin/login", {
+      phone_number: phoneNumber,
+      password: password,
+    });
 
-      const data = await response.json();
+    localStorage.setItem("adminToken", response.data.access_token);
+    localStorage.setItem("adminUser", JSON.stringify(response.data.user));
 
-      if (response.ok) {
-        
-        localStorage.setItem("adminToken", data.access_token);
-        localStorage.setItem("adminUser", JSON.stringify(data.user));
+    setMessage("Login successful! Redirecting...");
 
-        setMessage("Login successful! Redirecting...");
+    setTimeout(() => {
+      navigate("/Dashboard");
+    }, 800);
 
-        setTimeout(() => {
-          navigate("/Dashboard"); 
-        }, 1000);
+  } catch (error) {
 
-      } else {
-        setMessage(data.detail || "Login failed");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("Server error. Is the backend running?");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setMessage(
+      error.response?.data?.detail || "Login failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="admin-login-container">

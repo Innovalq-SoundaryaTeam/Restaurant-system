@@ -38,7 +38,7 @@ export default function Sidebar({ collapsed, mobileOpen, closeMobile }) {
           {menuOpen && (
             <div className={`submenu ${collapsed ? "floating" : ""}`}>
               <NavLink to="/food-items" onClick={closeMobile}>Food Items</NavLink>
-              <NavLink to="/menu" onClick={closeMobile}>Menu List</NavLink>
+              <NavLink to="/api/menu" onClick={() => { closeMobile()}}>Menu List</NavLink>
             </div>
           )}
         </div>

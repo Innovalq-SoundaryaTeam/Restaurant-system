@@ -1,4 +1,4 @@
-import { FaShoppingCart, FaRupeeSign, FaBox, FaUsers } from "react-icons/fa"; 
+import { FaShoppingCart, FaRupeeSign, FaBox, FaUsers, FaDollarSign } from "react-icons/fa"; 
 import { SiExpensify } from "react-icons/si";
 import "../styles/Metricard.css";
 

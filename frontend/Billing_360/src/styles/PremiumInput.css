@@ -1,0 +1,33 @@
+.premium-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.premium-field label{
+  color:white;
+  font-weight:500;
+}
+
+.premium-field input,
+.premium-field select,
+.premium-field textarea{
+
+  background:transparent;
+  border:1px solid #00c853;
+  border-radius:12px;
+
+  padding:14px;
+  /* color:white; */
+  
+}
+
+.premium-field input:focus,.premium-field textarea:focus,.premium-field select{
+  outline: none;
+  box-shadow: -2px 3px 0px 2px #4aff96b6;
+}
+
+.premium-field input::placeholder,
+textarea::placeholder{
+  color:rgba(255,255,255,0.6);
+}

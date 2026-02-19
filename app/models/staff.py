@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Enum
+from xmlrpc.client import Boolean
+from sqlalchemy import Column, Integer, String,Enum, Boolean
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 
@@ -14,7 +15,7 @@ class Staff(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
-    phone = Column(String(20), unique=True, nullable=False, index=True)
-    pin = Column(String(255), nullable=False)  # Hashed password
-    role = Column(String(20), nullable=False, default=StaffRole.STAFF)
-    is_active = Column(Integer, default=1, nullable=False)
+    phone = Column(String(15), unique=True, nullable=False)
+    pin = Column(String(255), nullable=False)  # hashed pin
+    role = Column(String(50), default="staff")
+    is_active = Column(Boolean, default=True)

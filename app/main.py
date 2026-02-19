@@ -2,15 +2,16 @@ import sys
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket
-try:
-    from fastapi.middleware.cors import CORSMiddleware
-except Exception:
-    from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.api.routes import kitchen as kitchen_routes
 from app.api.routes import attendance
 from app.api.routes.attendance import router as attendance_router
+from app.api.routes import settings
+import app.api.routes.auth as auth_routes
+import app.api.routes.admin as admin_routes
+
 
 
 # --------------------------------------------------
@@ -112,14 +113,11 @@ app = FastAPI(
 # --------------------------------------------------
 # CORS
 # --------------------------------------------------
+app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["*"],  # allow all origins for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -135,6 +133,10 @@ app.include_router(admin_routes.router, prefix="/api", tags=["Admin"])
 app.include_router(billing_routes.router, prefix="/api", tags=["Billing"])
 app.include_router(kitchen_routes.router, prefix="/api", tags=["Kitchen"])
 app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendance"])
+app.include_router(settings.router)
+app.include_router(auth_routes.router)
+
+
 
 
 # --------------------------------------------------

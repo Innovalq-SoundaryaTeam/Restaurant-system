@@ -64,6 +64,9 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+ACCESS_TOKEN_EXPIRE_HOURS: int = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_HOURS", 24)
+)
 
 print("Configuration loaded successfully")
 print(f"   SMTP Server: {SMTP_SERVER}:{SMTP_PORT}")
@@ -82,8 +85,21 @@ class Settings(BaseModel):
     SMTP_SERVER: str = SMTP_SERVER
     SMTP_PORT: int = SMTP_PORT
     ADMIN_EMAIL: str | None = ADMIN_EMAIL
+    ACCESS_TOKEN_EXPIRE_HOURS: int = ACCESS_TOKEN_EXPIRE_HOURS
+
 
 
 @lru_cache()
 def get_settings():
-    return Settings()
+    settings = Settings()
+
+    print("Configuration loaded successfully")
+    print(f"   SMTP Server: {settings.SMTP_SERVER}:{settings.SMTP_PORT}")
+    print(f"   Admin Email: {settings.ADMIN_EMAIL or 'Not set'}")
+
+    return settings
+
+
+# 🔥 VERY IMPORTANT — DO NOT DELETE
+settings = get_settings()
+
